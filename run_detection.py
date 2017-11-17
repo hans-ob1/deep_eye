@@ -12,23 +12,22 @@ from matplotlib import pyplot as plt
 from PIL import Image
 
 import cv2
-cap = cv2.VideoCapture(0)
 
-# set capture parameter camera dependent
-ret = cap.set(3,1280);
-ret = cap.set(4,720);
-
-# This is needed since the notebook is stored in the object_detection folder.
-sys.path.append("..")
-
+# cam resolution (720p)
+FRAME_WIDTH = 1280
+FRAME_HEIGHT = 720
 
 ## Object detection imports
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
 
-CWD_PATH = os.getcwd()
+# set capture parameter camera to 720p
+cap = cv2.VideoCapture(0)
+ret = cap.set(3,FRAME_WIDTH);
+ret = cap.set(4,FRAME_HEIGHT);
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
+CWD_PATH = os.getcwd()
 MODEL_NAME = 'ssd_3class'
 PATH_TO_CKPT = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, 'frozen_inference_graph.pb')
 
@@ -51,20 +50,8 @@ label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
 categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
 category_index = label_map_util.create_category_index(categories)
 
-'''
-def load_image_into_numpy_array(image):
-  (im_width, im_height) = image.size
-  return np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8)
 
-
-## Detection
-PATH_TO_TEST_IMAGES_DIR = 'test_images'
-TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 3) ]
-
-# Size, in inches, of the output images.
-IMAGE_SIZE = (12, 8)
-'''
-
+# Detection Part
 with detection_graph.as_default():
   with tf.Session(graph=detection_graph) as sess:
     while True:
@@ -127,3 +114,4 @@ with detection_graph.as_default():
       if cv2.waitKey(1) & 0xFF == ord('q'):
         cv2.destroyAllWindows()
         break
+ 
