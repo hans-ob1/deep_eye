@@ -1,7 +1,7 @@
-# Description
+### Description
 This package uses google object detection api SSD mobilenetv1 model to detect and track obstacles from a live camera feed. I extracted the 5 classes data information (person, bike, vehicle, stopsign and trafficlight) from COCO dataset and trained a sample for road obstacle detection.
 
-# Environment Setup
+### Environment Setup
 - Ubuntu 16.04.3
 - OpenCV 3.1
 - Tensorflow r1.3
