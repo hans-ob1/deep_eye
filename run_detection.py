@@ -22,20 +22,23 @@ from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
 
 # set capture parameter camera to 720p
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("simpletestcase.mp4")
 ret = cap.set(3,FRAME_WIDTH);
 ret = cap.set(4,FRAME_HEIGHT);
 
+frame_width = int(cap.get(3))
+frame_height = int(cap.get(4))
+
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
 CWD_PATH = os.getcwd()
-MODEL_NAME = 'ssd_3class'
+MODEL_NAME = 'ssd_5class_coco'
 PATH_TO_CKPT = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, 'frozen_inference_graph.pb')
 
 # List of the strings that is used to add correct label for each box.
 PATH_TO_LABELS = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, 'detection_label_map.pbtxt')
 
 # num of classes
-NUM_CLASSES = 3
+NUM_CLASSES = 5
 
 detection_graph = tf.Graph()
 with detection_graph.as_default():
@@ -50,6 +53,9 @@ label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
 categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
 category_index = label_map_util.create_category_index(categories)
 
+
+# Define the codec and create VideoWriter object.The output is stored in 'outpy.avi' file.
+out = cv2.VideoWriter('outputvideo1.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
 
 # Detection Part
 with detection_graph.as_default():
@@ -93,9 +99,13 @@ with detection_graph.as_default():
             display_text = obj_name + ": " + str(obj_prob)
 
             # TODO: make this part more scalable
-            if obj_name == "person":
+            if obj_name == "pedestrian":
                 display_colour = (255,0,0) # red 
             elif obj_name == "bike":
+                display_colour = (0,0,255) # blue
+            elif obj_name == "vehicle":
+                display_colour = (0,0,255) # blue
+            elif obj_name == "trafficlight":
                 display_colour = (0,0,255) # blue
             else:
                 display_colour = (0,255,0) # green
@@ -110,8 +120,11 @@ with detection_graph.as_default():
             cv2.putText(image_np,display_text,display_text_coord,0,0.5,display_colour)
             cv2.rectangle(image_np,tl,br,display_colour,2)
 
+      # Write the frame into the file 'output.avi'
+      out.write(image_np)
       cv2.imshow('Detection Result', image_np)
       if cv2.waitKey(1) & 0xFF == ord('q'):
         cv2.destroyAllWindows()
         break
- 
+
+    out.release()
