@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>639</width>
-    <height>504</height>
+    <width>660</width>
+    <height>545</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,13 +17,13 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>80</y>
-      <width>621</width>
-      <height>381</height>
+      <y>10</y>
+      <width>641</width>
+      <height>481</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -32,32 +32,123 @@
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
-    <property name="title">
-     <string>Video</string>
+    <property name="currentIndex">
+     <number>1</number>
     </property>
-    <widget class="QWidget" name="ImgWidget" native="true">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>601</width>
-       <height>351</height>
-      </rect>
-     </property>
+    <widget class="QWidget" name="live_tab" native="true">
+     <attribute name="title">
+      <string>Live Feed</string>
+     </attribute>
+     <widget class="QWidget" name="live_widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>601</width>
+        <height>351</height>
+       </rect>
+      </property>
+      <widget class="QLabel" name="displayText">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>160</y>
+         <width>221</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>No USB Camera Input Detected</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="recordButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>390</y>
+        <width>131</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>REC</string>
+      </property>
+     </widget>
     </widget>
-   </widget>
-   <widget class="QPushButton" name="startButton">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>621</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Start video</string>
-    </property>
+    <widget class="QWidget" name="playback_tab">
+     <attribute name="title">
+      <string>Playback</string>
+     </attribute>
+     <widget class="QWidget" name="playback_widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>601</width>
+        <height>351</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="loadButton">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>410</y>
+        <width>99</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Load</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="playButton">
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>410</y>
+        <width>99</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Play</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="horizontalSlider">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>380</y>
+        <width>601</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="stopButton">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>410</y>
+        <width>99</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Stop</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -65,8 +156,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>639</width>
-     <height>21</height>
+     <width>660</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>

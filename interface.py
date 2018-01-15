@@ -6,21 +6,33 @@ import threading
 import time
 import queue
 
+from playback import Player
 
-running = False
+# Cam Params
+cam_running = False
 capture_thread = None
-form_class = uic.loadUiType("interface.ui")[0]
 q = queue.Queue()
+
+# Playback Params
+video_running = False
+video_thread = None
+vid = queue.Queue()
+
+# interfacing UI
+form_class = uic.loadUiType("interface.ui")[0]
+
  
 
 def grab(cam, queue, width, height, fps):
-    global running
-    capture = cv2.VideoCapture("demovideo.mp4")
+    global cam_running
+    cam_running = True
+
+    capture = cv2.VideoCapture(0)
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, width)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
     capture.set(cv2.CAP_PROP_FPS, fps)
 
-    while(running):
+    while(cam_running):
         frame = {}        
         capture.grab()
         retval, img = capture.retrieve(0)
@@ -55,29 +67,39 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
-
-        self.startButton.clicked.connect(self.start_clicked)
         
-        self.window_width = self.ImgWidget.frameSize().width()
-        self.window_height = self.ImgWidget.frameSize().height()
-        self.ImgWidget = OwnImageWidget(self.ImgWidget)       
+        # Livefeed tab:
+        self.window_width = self.live_widget.frameSize().width()
+        self.window_height = self.live_widget.frameSize().height()
+        self.live_widget = OwnImageWidget(self.live_widget)       
 
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(1)
 
-
-    def start_clicked(self):
-        global running
-        running = True
-        capture_thread.start()
-        self.startButton.setEnabled(False)
-        self.startButton.setText('Starting...')
+        # Playback tab:
+        self.loadButton.clicked.connect(self.load_file)
+        self.player = Player()
 
 
+    # Playback Mode
+    def load_file(self):
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"Import Video", "","Video Files (*.avi *.mp4)", options=options)
+
+        if fileName:
+            self.player.launchVideo(fileName)
+
+    # Live Mode
     def update_frame(self):
         if not q.empty():
-            self.startButton.setText('Camera is live')
+
+            # UI thingy
+            self.recordButton.setEnabled(True)
+            self.displayText.setText('Starting...')
+            self.displayText.setText('')
+
             frame = q.get()
             img = frame["img"]
 
@@ -94,18 +116,22 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             height, width, bpc = img.shape
             bpl = bpc * width
             image = QtGui.QImage(img.data, width, height, bpl, QtGui.QImage.Format_RGB888)
-            self.ImgWidget.setImage(image)
+            self.live_widget.setImage(image)
 
     def closeEvent(self, event):
-        global running
-        running = False
+        global cam_running
+        cam_running = False
+        self.player.killPlayer()
 
 
+def main():
+    capture_thread = threading.Thread(target=grab, args = (0, q, 1280, 720, 60))
+    capture_thread.start()
 
-capture_thread = threading.Thread(target=grab, args = (0, q, 1920, 1080, 30))
+    app = QtWidgets.QApplication(sys.argv)
+    w = MyWindowClass(None)
+    w.setWindowTitle('DeepCam 2018')
+    w.show()
+    app.exec_()
 
-app = QtWidgets.QApplication(sys.argv)
-w = MyWindowClass(None)
-w.setWindowTitle('Kurokesu PyQT OpenCV USB camera test panel')
-w.show()
-app.exec_()
+main()
