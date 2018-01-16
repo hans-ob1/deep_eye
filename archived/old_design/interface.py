@@ -6,6 +6,8 @@ import threading
 import time
 import queue
 
+from playback import Player
+
 # Cam Params
 cam_running = False
 capture_thread = None
@@ -20,7 +22,7 @@ vid = queue.Queue()
 form_class = uic.loadUiType("interface.ui")[0]
 
  
-# parallel threaded camera feed
+
 def grab(cam, queue, width, height, fps):
     global cam_running
     cam_running = True
@@ -40,9 +42,6 @@ def grab(cam, queue, width, height, fps):
             queue.put(frame)
         else:
             print (queue.qsize())
-
-    print("thread killed")
-
 
 class OwnImageWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
@@ -78,6 +77,20 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(1)
 
+        # Playback tab:
+        self.loadButton.clicked.connect(self.load_file)
+        self.player = Player()
+
+
+    # Playback Mode
+    def load_file(self):
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"Import Video", "","Video Files (*.avi *.mp4)", options=options)
+
+        if fileName:
+            self.player.launchVideo(fileName)
+
     # Live Mode
     def update_frame(self):
         if not q.empty():
@@ -108,6 +121,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def closeEvent(self, event):
         global cam_running
         cam_running = False
+        self.player.killPlayer()
 
 
 def main():
