@@ -6,15 +6,16 @@ import threading
 import time
 import queue
 
+from recordsave import Recorder
+
 # Cam Params
+CAM_WIDTH = 1280
+CAM_HEIGHT = 720
+CAM_FPS = 60
+
 cam_running = False
 capture_thread = None
 q = queue.Queue()
-
-# Playback Params
-video_running = False
-video_thread = None
-vid = queue.Queue()
 
 # interfacing UI
 form_class = uic.loadUiType("interface.ui")[0]
@@ -78,6 +79,15 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(1)
 
+        # Recorder object
+        self.record = Recorder(CAM_WIDTH, CAM_HEIGHT, CAM_FPS)
+        self.recordButton.clicked.connect(self.record_file)
+
+    def record_file(self):
+        dir_ = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select a folder:', '~/', QtWidgets.QFileDialog.ShowDirsOnly)
+        print (dir_)
+
+
     # Live Mode
     def update_frame(self):
         if not q.empty():
@@ -111,7 +121,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
 
 def main():
-    capture_thread = threading.Thread(target=grab, args = (0, q, 1280, 720, 60))
+    capture_thread = threading.Thread(target=grab, args = (0, q, CAM_WIDTH, CAM_HEIGHT, CAM_FPS))
     capture_thread.start()
 
     app = QtWidgets.QApplication(sys.argv)
