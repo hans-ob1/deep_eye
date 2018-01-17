@@ -116,8 +116,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             frame = q.get()
             img = frame["img"]
 
-            # record file
+            # tag datetime to each frame
+            cv2.putText(img,self.record.getDisplayLabel(),(10,30), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,0),2,cv2.LINE_AA)
 
+            # record file
             if self.record.getRecordingStatus():
                 self.record.vidWriter.write(img)
 
