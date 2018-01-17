@@ -11,7 +11,7 @@ from recordsave import Recorder
 # Cam Params
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
-CAM_FPS = 60
+CAM_FPS = 30
 
 cam_running = False
 capture_thread = None
@@ -81,11 +81,28 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         # Recorder object
         self.record = Recorder(CAM_WIDTH, CAM_HEIGHT, CAM_FPS)
-        self.recordButton.clicked.connect(self.record_file)
+        self.recordButton.clicked.connect(self.record_to)
 
-    def record_file(self):
-        dir_ = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select a folder:', '~/', QtWidgets.QFileDialog.ShowDirsOnly)
-        print (dir_)
+    def record_to(self):
+
+        if self.record.getPreDefinedFilePath() == "undefined":
+            # return filepath where video is saved
+            dir_ = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select a folder:', '~/', QtWidgets.QFileDialog.ShowDirsOnly)
+            self.record.setPreDefinedFilePath(dir_)
+            self.filepathText.setText('Saving to: ' + dir_)
+
+        else:
+
+            if self.record.getRecordingStatus():
+                # stop recording
+                self.record.turnOffRecording()
+                self.recordButton.setText('Record')
+            else:
+                self.record.invokeRecording()
+
+                if self.record.getRecordingStatus():
+                    self.recordButton.setText('Stop')
+
 
 
     # Live Mode
@@ -94,11 +111,15 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
             # UI thingy
             self.recordButton.setEnabled(True)
-            self.displayText.setText('Starting...')
             self.displayText.setText('')
 
             frame = q.get()
             img = frame["img"]
+
+            # record file
+
+            if self.record.getRecordingStatus():
+                self.record.vidWriter.write(img)
 
             img_height, img_width, img_colors = img.shape
             scale_w = float(self.window_width) / float(img_width)
@@ -118,6 +139,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def closeEvent(self, event):
         global cam_running
         cam_running = False
+        self.record.killRecorder()
 
 
 def main():

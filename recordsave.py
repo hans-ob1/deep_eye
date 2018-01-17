@@ -12,11 +12,12 @@ class Recorder:
 		self.fixed_Height = frame_height
 		self.fixed_Width = frame_width
 		self.fixed_fps = fps
-		self.predefinedFilePath = ""
+		self.predefinedFilePath = "undefined"
+		self.isRecording = False
 
-		self.datetime4display = QDateTime.currentDateTime().toString()
-		self.time4processing = QTime.currentTime().toString(Qt.DefaultLocaleLongDate).split()
-		self.date4processing = QDate.currentDate().toString(Qt.ISODate)
+		#self.datetime4display = QDateTime.currentDateTime().toString()
+		#self.time4processing = QTime.currentTime().toString(Qt.DefaultLocaleLongDate).split()
+		#self.date4processing = QDate.currentDate().toString(Qt.ISODate)
 
 		# initialize video writer
 		self.vidWriter = cv2.VideoWriter("demo.avi",cv2.VideoWriter_fourcc('M','J','P','G'), fps, (frame_width,frame_height))
@@ -32,7 +33,7 @@ class Recorder:
 	def setCurrentTime(self):
 		timeRaw = QTime.currentTime().toString(Qt.DefaultLocaleLongDate).split()
 		timeDiscrete = timeRaw[0].split(':')
-		self.time4processing = timeDiscrete[0] + '_' + timeDiscrete[1] + '_' + timeDiscrete[2] + "_" + timeRaw[1]		
+		self.time4processing = str(timeDiscrete[0]) + "_" + str(timeDiscrete[1]) + "_" + str(timeDiscrete[2]) + "_" + str(timeRaw[1])		
 
 	def getCurrentTime(self): 
 		self.setCurrentTime()
@@ -49,23 +50,43 @@ class Recorder:
 	def setPreDefinedFilePath(self, f_Path):
 		self.predefinedFilePath = f_Path
 
+	def getPreDefinedFilePath(self):
+		return self.predefinedFilePath
+
+	def getRecordingStatus(self):
+		return self.isRecording
+
+	def turnOffRecording(self):
+		self.isRecording = False
+
 	def invokeRecording(self):
 
 		'''
 			filepath format: /path/to/directory/
+
 		'''
-		completeFolderDir = predefinedFilePath + self.date4processing + '/'
+		self.setCurrentTime()
+		self.setTodayDate()
+
+		completeFolderDir = self.predefinedFilePath + '/' + self.date4processing + '/'
+
+		print(type(completeFolderDir))
+		print(type(self.time4processing))
 
 		os.makedirs(os.path.dirname(completeFolderDir), exist_ok=True)
-		completeFilePath = completeFolderDir + self.time4processing + '.avi'
+		completeFilePath = completeFolderDir + str(self.time4processing) + '.avi'
 
-		retval = self.vidWriter.open(completeFilePath, cv2.VideoWriter_fourcc('M','J','P','G'), self.fixed_fps, (self.fixed_Width,self.fixed_Height))
+		isOpened = self.vidWriter.open(completeFilePath, cv2.VideoWriter_fourcc('M','J','P','G'), self.fixed_fps, (self.fixed_Width,self.fixed_Height))
 
-		return retval
-
+		if isOpened:
+			self.isRecording = True
+			print("Video Witer opened successfully")
+		else:
+			self.isRecording = False
+			print("Error! Failed to open video writer")
 
 	def killRecorder(self):
-		self.videWriter.release()
+		self.vidWriter.release()
 
 
 

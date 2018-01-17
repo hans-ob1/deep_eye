@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>660</width>
-    <height>560</height>
+    <height>574</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <x>10</x>
       <y>10</y>
       <width>641</width>
-      <height>481</height>
+      <height>501</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -68,14 +68,27 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>250</x>
-        <y>390</y>
+        <x>240</x>
+        <y>410</y>
         <width>131</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>REC</string>
+       <string>Record</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="filepathText">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>380</y>
+        <width>601</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Saving to: </string>
       </property>
      </widget>
     </widget>
