@@ -7,6 +7,7 @@ import time
 import queue
 
 from recordsave import Recorder
+from ssd_engine import SSD_Detector
 
 # Cam Params
 CAM_WIDTH = 1280
@@ -83,6 +84,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.record = Recorder(CAM_WIDTH, CAM_HEIGHT, CAM_FPS)
         self.recordButton.clicked.connect(self.record_to)
 
+        # Detector object
+        self.detector = SSD_Detector()
+
     def record_to(self):
 
         if self.record.getPreDefinedFilePath() == "undefined":
@@ -115,6 +119,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
             frame = q.get()
             img = frame["img"]
+
+            # process frame (detect human/objects)
+            img = self.detector.process_image(img)
 
             # tag datetime to each frame
             cv2.putText(img,self.record.getDisplayLabel(),(10,30), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,0),2,cv2.LINE_AA)

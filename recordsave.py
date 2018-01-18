@@ -56,8 +56,8 @@ class Recorder:
 	def invokeRecording(self):
 
 		'''
-			filepath format: /path/to/directory/
-
+			Description: start recording from the camera and save it to
+			Saved file format: user_defined_directory/current_date/current_time.avi
 		'''
 		self.setCurrentTime()
 		self.setTodayDate()
@@ -74,7 +74,7 @@ class Recorder:
 
 		if isOpened:
 			self.isRecording = True
-			print("Video Witer opened successfully")
+			print("VideoWriter opened successfully")
 		else:
 			self.isRecording = False
 			print("Error! Failed to open video writer")
