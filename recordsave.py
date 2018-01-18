@@ -4,7 +4,7 @@ import os
 
 class Recorder:
 
-	vidWriter = None
+	#vidWriter = None
 
 	def __init__(self, frame_width, frame_height, fps):
 
@@ -14,13 +14,7 @@ class Recorder:
 		self.fixed_fps = fps
 		self.predefinedFilePath = "undefined"
 		self.isRecording = False
-
-		#self.datetime4display = QDateTime.currentDateTime().toString()
-		#self.time4processing = QTime.currentTime().toString(Qt.DefaultLocaleLongDate).split()
-		#self.date4processing = QDate.currentDate().toString(Qt.ISODate)
-
-		# initialize video writer
-		self.vidWriter = cv2.VideoWriter("demo.avi",cv2.VideoWriter_fourcc('M','J','P','G'), fps, (frame_width,frame_height))
+		self.vidWriter = None
 
 	# Date/Time setter and getters
 	def setDisplayLabel(self):
@@ -86,7 +80,8 @@ class Recorder:
 			print("Error! Failed to open video writer")
 
 	def killRecorder(self):
-		self.vidWriter.release()
+		if self.vidWriter != None:
+			self.vidWriter.release()
 
 
 
