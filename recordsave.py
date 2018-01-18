@@ -70,9 +70,14 @@ class Recorder:
 		os.makedirs(os.path.dirname(completeFolderDir), exist_ok=True)
 		completeFilePath = completeFolderDir + str(self.time4processing) + '.avi'
 
-		isOpened = self.vidWriter.open(completeFilePath, cv2.VideoWriter_fourcc('M','J','P','G'), self.fixed_fps, (self.fixed_Width,self.fixed_Height))
+		if self.vidWriter == None:
+			self.vidWriter = cv2.VideoWriter(completeFilePath, cv2.VideoWriter_fourcc('M','J','P','G'), self.fixed_fps, (self.fixed_Width,self.fixed_Height))
+		else:
+			self.vidWriter.open(completeFilePath, cv2.VideoWriter_fourcc('M','J','P','G'), self.fixed_fps, (self.fixed_Width,self.fixed_Height))
 
-		if isOpened:
+		
+
+		if self.vidWriter.isOpened:
 			self.isRecording = True
 			print("VideoWriter opened successfully")
 		else:
