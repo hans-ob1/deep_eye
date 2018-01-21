@@ -27,7 +27,7 @@ def grab(cam, queue, width, height, fps):
     global cam_running
     cam_running = True
 
-    capture = cv2.VideoCapture(0)
+    capture = cv2.VideoCapture(cam)
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, width)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
     capture.set(cv2.CAP_PROP_FPS, fps)
@@ -80,9 +80,16 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(1)
 
+        self.datetimeTagLocation = (10,30)
+        self.datetimeTagColour = (0,255,0)
+
         # Recorder object
         self.record = Recorder(CAM_WIDTH, CAM_HEIGHT, CAM_FPS)
         self.recordButton.clicked.connect(self.record_to)
+
+        self.subjectCheck.stateChanged.connect(self.record_on_detection)
+        self.recordSubjectActivity = False
+        self.inactiveCount = 0
 
         # Detector object
         self.detector = SSD_Detector()
@@ -91,12 +98,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         if self.record.getPreDefinedFilePath() == "undefined":
             # return filepath where video is saved
-            dir_ = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select a folder:', '~/', QtWidgets.QFileDialog.ShowDirsOnly)
+            dir_ = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select a folder for record output:', '~/', QtWidgets.QFileDialog.ShowDirsOnly)
             self.record.setPreDefinedFilePath(dir_)
-            self.filepathText.setText('Saving to: ' + dir_)
+            self.filepathText.setText('Saving video to: ' + dir_)
 
         else:
-
             if self.record.getRecordingStatus():
                 # stop recording
                 self.record.turnOffRecording()
@@ -107,6 +113,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 if self.record.getRecordingStatus():
                     self.recordButton.setText('Stop')
 
+    def record_on_detection(self):
+        if self.subjectCheck.isChecked():
+            self.recordSubjectActivity = True
+        else:
+            self.recordSubjectActivity = False     
 
 
     # Live Mode
@@ -120,15 +131,24 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             frame = q.get()
             img = frame["img"]
 
-            # process frame (detect human/objects)
-            img = self.detector.process_image(img)
-
             # tag datetime to each frame
-            cv2.putText(img,self.record.getDisplayLabel(),(10,30), cv2.FONT_HERSHEY_SIMPLEX, 1,(0,255,0),2,cv2.LINE_AA)
+            cv2.putText(img,self.record.getDisplayLabel(),self.datetimeTagLocation, cv2.FONT_HERSHEY_SIMPLEX, 1,self.datetimeTagColour,2,cv2.LINE_AA)
 
-            # record file
             if self.record.getRecordingStatus():
-                self.record.vidWriter.write(img)
+                if self.recordSubjectActivity: 
+                    # detect objects
+                    img, list_of_obj = self.detector.process_image(img)
+
+                    if len(list_of_obj) > 0:
+
+                        if self.inactiveCount > 60:
+                            self.record.invokeRecording() #reinitalize
+    
+                        self.record.vidWriter.write(img)
+                        self.inactiveCount = 0
+                    else:
+                        self.inactiveCount += 1
+
 
             img_height, img_width, img_colors = img.shape
             scale_w = float(self.window_width) / float(img_width)
@@ -157,7 +177,7 @@ def main():
 
     app = QtWidgets.QApplication(sys.argv)
     w = MyWindowClass(None)
-    w.setWindowTitle('DeepCam 2018')
+    w.setWindowTitle('DeepEye 2018')
     w.show()
     app.exec_()
 

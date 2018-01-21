@@ -75,8 +75,6 @@ class Recorder:
 		else:
 			self.vidWriter.open(completeFilePath, cv2.VideoWriter_fourcc('M','J','P','G'), self.fixed_fps, (self.fixed_Width,self.fixed_Height))
 
-		
-
 		if self.vidWriter.isOpened:
 			self.isRecording = True
 			print("VideoWriter opened successfully")

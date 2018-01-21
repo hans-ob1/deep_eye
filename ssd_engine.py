@@ -22,10 +22,10 @@ class SSD_Detector:
 
   def __init__(self):
     CWD_PATH = os.getcwd()
-    MODEL_NAME = 'data_model'
+    MODEL_NAME = 'ssd_inception_v2'
     PATH_TO_CKPT = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, 'frozen_inference_graph.pb')
     PATH_TO_LABELS = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, 'detection_label_map.pbtxt')
-    NUM_CLASSES = 5
+    NUM_CLASSES = 90
 
     self.detection_graph = tf.Graph()
     with self.detection_graph.as_default():
@@ -70,6 +70,8 @@ class SSD_Detector:
 
         # Get the dimension of the frame
         img_height, img_width, dim = image_np.shape
+
+        detected_objs = []
         
         # iterate it and display on screen
         if type(objects_detected) is list:
@@ -81,25 +83,20 @@ class SSD_Detector:
               display_text = obj_name + ": " + str(obj_prob)
 
               # TODO: make this part more scalable
-              if obj_name == "pedestrian":
-                  display_colour = (255,0,0) # red 
-              elif obj_name == "bike":
-                  display_colour = (0,0,255) # blue
-              elif obj_name == "vehicle":
-                  display_colour = (0,0,255) # blue
-              elif obj_name == "trafficlight":
-                  display_colour = (0,0,255) # blue
-              else:
-                  display_colour = (0,255,0) # green
+              if obj_name == "dog":
+                  display_colour = (255,0,0) # red
+                  
+                  if obj_name not in detected_objs:
+                    detected_objs.append(obj_name)
 
-              # topleft & bottomright coord of the bbox
-              tl = (int(obj[3]*img_width), int(obj[2]*img_height))
-              br = (int(obj[5]*img_width), int(obj[4]*img_height))
+                  # topleft & bottomright coord of the bbox
+                  tl = (int(obj[3]*img_width), int(obj[2]*img_height))
+                  br = (int(obj[5]*img_width), int(obj[4]*img_height))
 
-              # display text coord
-              display_text_coord = (tl[0]+5,tl[1]-10)
+                  # display text coord
+                  display_text_coord = (tl[0]+5,tl[1]-10)
 
-              cv2.putText(image_np,display_text,display_text_coord,0,0.5,display_colour)
-              cv2.rectangle(image_np,tl,br,display_colour,2)
+                  cv2.putText(image_np,display_text,display_text_coord,0,0.5,display_colour)
+                  cv2.rectangle(image_np,tl,br,display_colour,2)
 
-        return image_np
+        return image_np, detected_objs

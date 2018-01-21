@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>660</width>
+    <width>811</width>
     <height>574</height>
    </rect>
   </property>
@@ -22,7 +22,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>641</width>
+      <width>791</width>
       <height>501</height>
      </rect>
     </property>
@@ -68,7 +68,7 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>240</x>
+        <x>310</x>
         <y>410</y>
         <width>131</width>
         <height>41</height>
@@ -88,9 +88,56 @@
        </rect>
       </property>
       <property name="text">
-       <string>Saving to: </string>
+       <string>Saving video to: </string>
       </property>
      </widget>
+     <widget class="QGroupBox" name="triggerGroup">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>130</y>
+        <width>131</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Record Upon:</string>
+      </property>
+      <widget class="QCheckBox" name="motionCheck">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>30</y>
+         <width>117</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Motion (N/A)</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="subjectCheck">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>50</y>
+         <width>131</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Person, Pets</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Setting</string>
+     </attribute>
     </widget>
    </widget>
   </widget>
@@ -99,7 +146,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>660</width>
+     <width>811</width>
      <height>25</height>
     </rect>
    </property>
