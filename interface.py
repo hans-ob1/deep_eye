@@ -135,8 +135,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             cv2.putText(img,self.record.getDisplayLabel(),self.datetimeTagLocation, cv2.FONT_HERSHEY_SIMPLEX, 1,self.datetimeTagColour,2,cv2.LINE_AA)
 
             if self.record.getRecordingStatus():
-                if self.recordSubjectActivity: 
-                    # detect objects
+                if self.recordSubjectActivity:
+                    # detect objects using deep learning
                     img, list_of_obj = self.detector.process_image(img)
 
                     if len(list_of_obj) > 0:

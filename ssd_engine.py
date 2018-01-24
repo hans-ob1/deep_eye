@@ -27,6 +27,7 @@ class SSD_Detector:
     PATH_TO_LABELS = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, 'detection_label_map.pbtxt')
     NUM_CLASSES = 90
 
+    '''
     self.detection_graph = tf.Graph()
     with self.detection_graph.as_default():
       od_graph_def = tf.GraphDef()
@@ -42,7 +43,29 @@ class SSD_Detector:
 
     self.category_index = label_map_util.create_category_index(categories)
     self.sess = tf.Session(graph=self.detection_graph)
+    '''
 
+    try:
+      self.detection_graph = tf.Graph()
+      with self.detection_graph.as_default():
+            od_graph_def = tf.GraphDef()
+            with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+              serialized_graph = fid.read()
+              od_graph_def.ParseFromString(serialized_graph)
+              tf.import_graph_def(od_graph_def, name='')
+
+      self.detection_graph.as_default()
+    except:
+      print('Error! Cannot open: ', PATH_TO_CKPT) 
+
+    try: 
+      label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
+      categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
+
+      self.category_index = label_map_util.create_category_index(categories)
+      self.sess = tf.Session(graph=self.detection_graph)
+    except:
+      print ('Error! Cannot open: ', PATH_TO_LABELS)
 
   def process_image(self, image_np):
         # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
