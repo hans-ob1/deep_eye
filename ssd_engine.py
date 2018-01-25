@@ -22,9 +22,9 @@ class SSD_Detector:
 
   def __init__(self):
     CWD_PATH = os.getcwd()
-    MODEL_NAME = 'ssd_inception_v2'
+    MODEL_NAME = 'ssd_mobilenet_v1_coco'
     PATH_TO_CKPT = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, 'frozen_inference_graph.pb')
-    PATH_TO_LABELS = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, 'detection_label_map.pbtxt')
+    PATH_TO_LABELS = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, 'mscoco_label_map.pbtxt')
     NUM_CLASSES = 90
 
     '''
@@ -106,7 +106,7 @@ class SSD_Detector:
               display_text = obj_name + ": " + str(obj_prob)
 
               # TODO: make this part more scalable
-              if obj_name == "dog":
+              if obj_name == "person":
                   display_colour = (255,0,0) # red
                   
                   if obj_name not in detected_objs:

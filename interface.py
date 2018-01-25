@@ -87,10 +87,20 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # Recorder object
         self.record = Recorder(CAM_WIDTH, CAM_HEIGHT, CAM_FPS)
         self.recordButton.clicked.connect(self.record_to)
+        self.timetracker = -1
 
         self.subjectCheck.stateChanged.connect(self.record_on_detection)
-        self.recordSubjectActivity = False
+        self.recordOnPresence = False
         self.inactiveCount = 0
+        self.list_of_obj = 0
+
+        self.motionCheck.stateChanged.connect(self.record_on_motion)
+        self.recordOnMotion = False
+        self.isMoving = False
+        self.noMotionCount = 0
+
+        self.motionTagLocation = (CAM_WIDTH-300,30)
+        self.motionTagColour = (0,0,255)
 
         # Detector object
         self.detector = SSD_Detector()
@@ -103,8 +113,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         if self.record.getPreDefinedFilePath() == "undefined":
             # return filepath where video is saved
             dir_ = QtWidgets.QFileDialog.getExistingDirectory(None, 'Select a folder for record output:', '~/', QtWidgets.QFileDialog.ShowDirsOnly)
-            self.record.setPreDefinedFilePath(dir_)
-            self.filepathText.setText('Saving video to: ' + dir_)
+
+            if len(dir_) > 0:
+                self.record.setPreDefinedFilePath(dir_)
+                self.filepathText.setText('Saving video to: ' + dir_)
+            else:
+                self.record.setPreDefinedFilePath("undefined")
 
         else:
             if self.record.getRecordingStatus():
@@ -119,10 +133,122 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def record_on_detection(self):
         if self.subjectCheck.isChecked():
-            self.recordSubjectActivity = True
+            self.recordOnPresence = True
         else:
-            self.recordSubjectActivity = False     
+            self.recordOnPresence = False
 
+    def record_on_motion(self):
+        if self.motionCheck.isChecked():
+            self.recordOnMotion = True
+        else:
+            self.recordOnMotion = False
+
+    def recordTriggerFunc(self, frame):
+        # record on presence only
+        if self.recordOnPresence and not self.recordOnMotion:
+            if len(self.list_of_obj) > 0:
+
+                if self.inactiveCount >= 60: # estimate 2 sec of detect nothing
+                    self.record.invokeRecording() #reinitalize
+
+                self.record.vidWriter.write(frame)
+                self.inactiveCount = 0
+            else:
+
+                if self.inactiveCount < 60:
+                    self.inactiveCount += 1
+                else:
+                    self.record.killRecorder()
+
+        elif self.recordOnMotion and not self.recordOnPresence:
+            if self.isMoving:
+                if self.noMotionCount >= 60:
+                    self.record.invokeRecording()
+
+                self.record.vidWriter.write(frame)
+                self.noMotionCount = 0
+            else:
+                if self.noMotionCount < 60:
+                    self.noMotionCount += 1
+                else:
+                    self.record.killRecorder()
+
+        elif self.recordOnMotion and self.recordOnPresence:
+            if len(self.list_of_obj) > 0 or self.isMoving:
+                if self.inactiveCount >= 60 and self.noMotionCount >= 60:
+                    self.record.invokeRecording()
+                self.record.vidWriter.write(frame)
+                self.inactiveCount = 0
+                self.noMotionCount = 0
+            else:
+                assessOne = False
+                assessTwo = False
+
+                if self.noMotionCount < 60:
+                    self.noMotionCount += 1
+                else:
+                    assessOne = True
+                if self.inactiveCount < 60:
+                    self.inactiveCount += 1
+                else:
+                    assessTwo = True
+
+                if assessOne and assessTwo:
+                    self.record.killRecorder()
+        else:
+            # Record everything in interval of 5 minutes
+            if self.timetracker == -1:
+                self.timetracker = self.record.getCurrentTime()
+            else:
+                ref_hr, ref_min, ref_sec, _ = self.timetracker.split('_')
+                refTimeInSeconds = int(ref_min)*60 + int(ref_sec)
+
+                cur_hr, cur_min, cur_sec, _ = self.record.getCurrentTime().split('_')
+                curTimeInSeconds = int(cur_min)*60 + int(cur_sec)
+
+                if curTimeInSeconds - refTimeInSeconds >= 5:
+                    self.record.invokeRecording()
+                    self.timetracker = self.record.getCurrentTime()
+            
+            self.record.vidWriter.write(frame)
+
+
+
+    def drawOnFrame(self, inputImg, isMotion):
+        # Tag date
+        cv2.putText(inputImg,self.record.getDisplayLabel(),
+                        self.datetimeTagLocation, 
+                        cv2.FONT_HERSHEY_SIMPLEX, 
+                        1,
+                        self.datetimeTagColour,
+                        2,
+                        cv2.LINE_AA)
+
+        # Tag motion indicator        
+        if isMotion:
+            cv2.putText(inputImg,"Motion Detected!",
+                            self.motionTagLocation, 
+                            cv2.FONT_HERSHEY_SIMPLEX, 
+                            1,
+                            self.motionTagColour,
+                            2,
+                            cv2.LINE_AA)            
+
+    def displayFrame(self, img):
+        img_height, img_width, img_colors = img.shape
+        scale_w = float(self.window_width) / float(img_width)
+        scale_h = float(self.window_height) / float(img_height)
+        scale = min([scale_w, scale_h])
+
+        if scale == 0:
+            scale = 1
+        
+        img = cv2.resize(img, None, fx=scale, fy=scale, interpolation = cv2.INTER_CUBIC)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        height, width, bpc = img.shape
+        bpl = bpc * width
+        image = QtGui.QImage(img.data, width, height, bpl, QtGui.QImage.Format_RGB888)
+        self.live_widget.setImage(image)
 
     # Live Mode
     def update_frame(self):
@@ -132,42 +258,28 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.recordButton.setEnabled(True)
             self.displayText.setText('')
 
+            # grab frame from video thread
             frame = q.get()
             img = frame["img"]
 
-            # tag datetime to each frame
-            cv2.putText(img,self.record.getDisplayLabel(),self.datetimeTagLocation, cv2.FONT_HERSHEY_SIMPLEX, 1,self.datetimeTagColour,2,cv2.LINE_AA)
+            if self.recordOnMotion:
+                # detect motion
+                motionImg = img.copy()
+                self.isMoving = self.motiondetect.detectmotion(motionImg)
+
+            if self.recordOnPresence:
+                # detect objects and indicate on display
+                img, self.list_of_obj = self.detector.process_image(img)
+
+
+            # Tag the frame with indications
+            self.drawOnFrame(img,self.isMoving)
 
             if self.record.getRecordingStatus():
-                if self.recordSubjectActivity:
-                    # detect objects using deep learning
-                    img, list_of_obj = self.detector.process_image(img)
+                self.recordTriggerFunc(img)
 
-                    if len(list_of_obj) > 0:
-
-                        if self.inactiveCount > 60:
-                            self.record.invokeRecording() #reinitalize
-    
-                        self.record.vidWriter.write(img)
-                        self.inactiveCount = 0
-                    else:
-                        self.inactiveCount += 1
-
-
-            img_height, img_width, img_colors = img.shape
-            scale_w = float(self.window_width) / float(img_width)
-            scale_h = float(self.window_height) / float(img_height)
-            scale = min([scale_w, scale_h])
-
-            if scale == 0:
-                scale = 1
-            
-            img = cv2.resize(img, None, fx=scale, fy=scale, interpolation = cv2.INTER_CUBIC)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            height, width, bpc = img.shape
-            bpl = bpc * width
-            image = QtGui.QImage(img.data, width, height, bpl, QtGui.QImage.Format_RGB888)
-            self.live_widget.setImage(image)
+            # show frame with annotation
+            self.displayFrame(img)
 
     def closeEvent(self, event):
         global cam_running

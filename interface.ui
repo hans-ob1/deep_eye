@@ -105,7 +105,7 @@
       </property>
       <widget class="QCheckBox" name="motionCheck">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="geometry">
         <rect>
@@ -116,7 +116,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Motion (N/A)</string>
+        <string>Motion</string>
        </property>
       </widget>
       <widget class="QCheckBox" name="subjectCheck">

@@ -14,10 +14,11 @@ class MotionDetector:
 		return cv2.GaussianBlur(inputImg,(15,15),0)
 
 	def medianblur(self,inputImg):
-		return cv2.medianBlur(iinputImg,5)
+		return cv2.medianBlur(inputImg,5)
 
 	def threshold(self,inputImg):
 		_,result = cv2.threshold(inputImg,10,255,cv2.THRESH_BINARY)
+		return result
 
 	def calculate_movement(self,inputImg):
 		height, width = inputImg.shape
@@ -25,7 +26,7 @@ class MotionDetector:
 		activepixels = cv2.countNonZero(inputImg)
 		motionPercentage = (activepixels / area)*100
 
-		if motionPercentage > 1:
+		if motionPercentage > 0.5:
 			self.motion = True
 		else:
 			self.motion = False
@@ -64,5 +65,16 @@ class MotionDetector:
 			self.prob = 0.1
 
 	def detectmotion(self, inputImg):
-		self.calculate_movement(inputImg)
-		return self.bayesianclassifier(self) > 0.5
+
+		step1 = self.medianblur(inputImg)
+
+		step2 = self.bgsubtractor.apply(step1)
+
+		step3 = self.gaussianfilter(step2)
+
+		step4 = self.threshold(step3)
+
+		self.calculate_movement(step4)
+		self.bayesianclassifier()
+
+		return  self.prob > 0.5
