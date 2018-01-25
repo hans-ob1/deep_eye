@@ -8,6 +8,7 @@ import queue
 
 from recordsave import Recorder
 from ssd_engine import SSD_Detector
+from motiondetector import MotionDetector
 
 # Cam Params
 CAM_WIDTH = 1280
@@ -93,6 +94,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         # Detector object
         self.detector = SSD_Detector()
+
+        # Motion detector object
+        self.motiondetect = MotionDetector()
 
     def record_to(self):
 

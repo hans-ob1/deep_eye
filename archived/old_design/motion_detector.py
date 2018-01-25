@@ -39,7 +39,6 @@ def bayesianclassifier(moved):
    	probability of no observed motion given there is motion 0.1
 	probability of no observed motion given there is no motion 0.8
 	---------------------------------------------------------------
-	
 	'''
 
 	global prob
@@ -57,6 +56,7 @@ def bayesianclassifier(moved):
 		else:
 			prob = (0.1*prob)/( (0.1*prob) + 0.8*(1-prob))
 
+	# simple boundary setting
 	if prob > 0.6:
 		prob = 0.6
 
