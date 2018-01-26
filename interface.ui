@@ -2,13 +2,28 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>811</width>
-    <height>574</height>
+    <width>863</width>
+    <height>620</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>862</width>
+    <height>620</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -17,13 +32,19 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>861</width>
+     <height>571</height>
+    </size>
+   </property>
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>791</width>
-      <height>501</height>
+      <x>20</x>
+      <y>20</y>
+      <width>821</width>
+      <height>531</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -31,6 +52,12 @@
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>821</width>
+      <height>531</height>
+     </size>
     </property>
     <property name="currentIndex">
      <number>0</number>
@@ -44,9 +71,15 @@
        <rect>
         <x>20</x>
         <y>20</y>
-        <width>601</width>
-        <height>351</height>
+        <width>640</width>
+        <height>360</height>
        </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>640</width>
+        <height>360</height>
+       </size>
       </property>
       <widget class="QLabel" name="displayText">
        <property name="geometry">
@@ -68,11 +101,17 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>310</x>
-        <y>410</y>
+        <x>330</x>
+        <y>450</y>
         <width>131</width>
         <height>41</height>
        </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>131</width>
+        <height>41</height>
+       </size>
       </property>
       <property name="text">
        <string>Record</string>
@@ -81,11 +120,17 @@
      <widget class="QLabel" name="filepathText">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>380</y>
+        <x>30</x>
+        <y>400</y>
         <width>601</width>
         <height>17</height>
        </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>601</width>
+        <height>17</height>
+       </size>
       </property>
       <property name="text">
        <string>Saving video to: </string>
@@ -94,11 +139,17 @@
      <widget class="QGroupBox" name="triggerGroup">
       <property name="geometry">
        <rect>
-        <x>640</x>
+        <x>680</x>
         <y>130</y>
         <width>131</width>
-        <height>101</height>
+        <height>131</height>
        </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>131</width>
+        <height>131</height>
+       </size>
       </property>
       <property name="title">
        <string>Record Upon:</string>
@@ -124,7 +175,7 @@
         <rect>
          <x>0</x>
          <y>50</y>
-         <width>131</width>
+         <width>111</width>
          <height>22</height>
         </rect>
        </property>
@@ -133,8 +184,13 @@
        </property>
       </widget>
      </widget>
+     <zorder>live_widget</zorder>
+     <zorder>recordButton</zorder>
+     <zorder>filepathText</zorder>
+     <zorder>triggerGroup</zorder>
+     <zorder>horizontalSpacer</zorder>
     </widget>
-    <widget class="QWidget" name="tab">
+    <widget class="QWidget" name="setting_tab">
      <attribute name="title">
       <string>Setting</string>
      </attribute>
@@ -146,7 +202,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>811</width>
+     <width>863</width>
      <height>25</height>
     </rect>
    </property>

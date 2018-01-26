@@ -77,7 +77,27 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
-        
+
+        # resize param ratio (w,h)
+        MainFrame_Width = self.frameSize().width()
+        MainFrame_Height = self.frameSize().height()
+        self.tabWidget_relativeSizeRatio = [self.tabWidget.geometry().width()/MainFrame_Width,
+                                            self.tabWidget.geometry().height()/MainFrame_Height]
+        self.liveWidget_relativeSizeRatio = [self.live_widget.geometry().width()/MainFrame_Width,
+                                            self.live_widget.geometry().height()/MainFrame_Height]
+        self.triggerGroup_relativeSizeRatio = [self.triggerGroup.geometry().width()/MainFrame_Width,
+                                            self.triggerGroup.geometry().height()/MainFrame_Height]
+        self.recordButton_relativeSizeRatio = [self.recordButton.geometry().width()/MainFrame_Width,
+                                            self.recordButton.geometry().height()/MainFrame_Height]
+
+        # relative positions
+        self.triggerGroup_relativePosRatio = [self.triggerGroup.geometry().x()/MainFrame_Width,
+                                            self.triggerGroup.geometry().y()/MainFrame_Height]
+        self.filepathText_relativePosRatio = [self.filepathText.geometry().x()/MainFrame_Width,
+                                            self.filepathText.geometry().y()/MainFrame_Height]
+        self.recordButton_relativePosRatio = [self.recordButton.geometry().x()/MainFrame_Width,
+                                            self.recordButton.geometry().y()/MainFrame_Height]
+
         # Livefeed tab:
         self.window_width = self.live_widget.frameSize().width()
         self.window_height = self.live_widget.frameSize().height()
@@ -98,7 +118,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.subjectCheck.stateChanged.connect(self.record_on_detection)
         self.recordOnPresence = False
         self.inactiveCount = 0
-        self.list_of_obj = 0
+        self.isDetected = False
 
         self.motionCheck.stateChanged.connect(self.record_on_motion)
         self.recordOnMotion = False
@@ -115,6 +135,57 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         # Motion detector object
         self.motiondetect = MotionDetector()
+
+    def resizeEvent(self,event):
+        # readjust ui according to window size
+        # MainWindow.textEdit.setGeometry(QtCore.QRect(30, 80, 341, 441))
+
+        curr_mainframe_w = self.frameSize().width()
+        curr_mainframe_h = self.frameSize().height()
+
+        # new TabWidget Size
+        x = self.tabWidget.geometry().x()
+        y = self.tabWidget.geometry().y()
+
+        new_width = int(self.tabWidget_relativeSizeRatio[0] * curr_mainframe_w)
+        new_height = int(self.tabWidget_relativeSizeRatio[1] * curr_mainframe_h)
+
+        self.tabWidget.setGeometry(x,y,new_width,new_height)
+
+        # new live display Size
+        x = self.live_widget.geometry().x()
+        y = self.live_widget.geometry().y()
+
+        new_width = int(self.liveWidget_relativeSizeRatio[0] * curr_mainframe_w)
+        new_height = int(self.liveWidget_relativeSizeRatio[1] * curr_mainframe_h)
+
+        self.window_width = new_width
+        self.window_height = new_height
+
+        self.live_widget.setGeometry(x,y,new_width,new_height)
+        # new triggergroup Size
+        new_x = int(self.triggerGroup_relativePosRatio[0]*curr_mainframe_w)
+        new_y = int(self.triggerGroup_relativePosRatio[1]*curr_mainframe_h)
+        new_width = int(self.triggerGroup_relativeSizeRatio[0] * curr_mainframe_w)
+        new_height = int(self.triggerGroup_relativeSizeRatio[1] * curr_mainframe_h)
+
+        self.triggerGroup.setGeometry(new_x,new_y,new_width,new_height)
+
+        # new record button
+        new_x = int(self.recordButton_relativePosRatio[0]*curr_mainframe_w)
+        new_y = int(self.recordButton_relativePosRatio[1]*curr_mainframe_h)
+        new_width = int(self.recordButton_relativeSizeRatio[0] * curr_mainframe_w)
+        new_height = int(self.recordButton_relativeSizeRatio[1] * curr_mainframe_h)
+
+        self.recordButton.setGeometry(new_x,new_y,new_width,new_height)
+
+        # new filepath display
+        new_x = int(self.filepathText_relativePosRatio[0]*curr_mainframe_w)
+        new_y = int(self.filepathText_relativePosRatio[1]*curr_mainframe_h)
+        width = self.filepathText.geometry().width()
+        height = self.filepathText.geometry().height()
+
+        self.filepathText.setGeometry(new_x,new_y,width,height)
 
     def record_to(self):
 
@@ -154,7 +225,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def recordTriggerFunc(self, frame):
         # record on presence only
         if self.recordOnPresence and not self.recordOnMotion:
-            if len(self.list_of_obj) > 0:
+            if self.isDetected:
 
                 if self.inactiveCount >= RECORD_INTERVAL: # estimate 2 sec of detect nothing
                     self.record.invokeRecording() #reinitalize
@@ -182,7 +253,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                     self.record.killRecorder()
 
         elif self.recordOnMotion and self.recordOnPresence:
-            if len(self.list_of_obj) > 0 or self.isMoving:
+            if self.isDetected or self.isMoving:
                 if self.inactiveCount >= RECORD_INTERVAL and self.noMotionCount >= RECORD_INTERVAL:
                     self.record.invokeRecording()
                 self.record.vidWriter.write(frame)
@@ -244,6 +315,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def displayFrame(self, img):
         img_height, img_width, img_colors = img.shape
+
         scale_w = float(self.window_width) / float(img_width)
         scale_h = float(self.window_height) / float(img_height)
         scale = min([scale_w, scale_h])
@@ -279,7 +351,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
             if self.recordOnPresence:
                 # detect objects and indicate on display
-                img, self.list_of_obj = self.detector.process_image(img)
+                img, self.isDetected = self.detector.process_image(img)
 
 
             # Tag the frame with indications
