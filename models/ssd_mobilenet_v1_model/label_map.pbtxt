@@ -1,0 +1,14 @@
+item {
+  id: 1
+  name: 'person'
+}
+
+item {
+  id: 2
+  name: 'dog'
+}
+
+item {
+  id: 3
+  name: 'cat'
+}

@@ -15,14 +15,20 @@ CAM_WIDTH = 1280
 CAM_HEIGHT = 720
 CAM_FPS = 30
 
+# (record everything mode) This parameter determines the intervals of recording
+RECORD_INTERVAL = 300 # in seconds
+
+# (smart recording mode) This parameter determines how many more frames to save after inactivity
+RECORD_EXTENSION = 60 # in frame counts
+
+# Threading variables
 cam_running = False
 capture_thread = None
 q = queue.Queue()
 
-# interfacing UI
+# load UI
 form_class = uic.loadUiType("interface.ui")[0]
 
- 
 # parallel threaded camera feed
 def grab(cam, queue, width, height, fps):
     global cam_running
@@ -44,7 +50,7 @@ def grab(cam, queue, width, height, fps):
         else:
             print (queue.qsize())
 
-    print("thread killed")
+    print("Terminated camera feed")
 
 
 class OwnImageWidget(QtWidgets.QWidget):
@@ -104,6 +110,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         # Detector object
         self.detector = SSD_Detector()
+        if not self.detector.ready:
+            self.subjectCheck.setEnabled(False)
 
         # Motion detector object
         self.motiondetect = MotionDetector()
@@ -148,34 +156,34 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         if self.recordOnPresence and not self.recordOnMotion:
             if len(self.list_of_obj) > 0:
 
-                if self.inactiveCount >= 60: # estimate 2 sec of detect nothing
+                if self.inactiveCount >= RECORD_INTERVAL: # estimate 2 sec of detect nothing
                     self.record.invokeRecording() #reinitalize
 
                 self.record.vidWriter.write(frame)
                 self.inactiveCount = 0
             else:
 
-                if self.inactiveCount < 60:
+                if self.inactiveCount < RECORD_INTERVAL:
                     self.inactiveCount += 1
                 else:
                     self.record.killRecorder()
 
         elif self.recordOnMotion and not self.recordOnPresence:
             if self.isMoving:
-                if self.noMotionCount >= 60:
+                if self.noMotionCount >= RECORD_INTERVAL:
                     self.record.invokeRecording()
 
                 self.record.vidWriter.write(frame)
                 self.noMotionCount = 0
             else:
-                if self.noMotionCount < 60:
+                if self.noMotionCount < RECORD_INTERVAL:
                     self.noMotionCount += 1
                 else:
                     self.record.killRecorder()
 
         elif self.recordOnMotion and self.recordOnPresence:
             if len(self.list_of_obj) > 0 or self.isMoving:
-                if self.inactiveCount >= 60 and self.noMotionCount >= 60:
+                if self.inactiveCount >= RECORD_INTERVAL and self.noMotionCount >= RECORD_INTERVAL:
                     self.record.invokeRecording()
                 self.record.vidWriter.write(frame)
                 self.inactiveCount = 0
@@ -184,11 +192,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 assessOne = False
                 assessTwo = False
 
-                if self.noMotionCount < 60:
+                if self.noMotionCount < RECORD_INTERVAL:
                     self.noMotionCount += 1
                 else:
                     assessOne = True
-                if self.inactiveCount < 60:
+                if self.inactiveCount < RECORD_INTERVAL:
                     self.inactiveCount += 1
                 else:
                     assessTwo = True
@@ -206,7 +214,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 cur_hr, cur_min, cur_sec, _ = self.record.getCurrentTime().split('_')
                 curTimeInSeconds = int(cur_min)*60 + int(cur_sec)
 
-                if curTimeInSeconds - refTimeInSeconds >= 5:
+                if curTimeInSeconds - refTimeInSeconds >= RECORD_INTERVAL:
                     self.record.invokeRecording()
                     self.timetracker = self.record.getCurrentTime()
             
@@ -266,6 +274,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 # detect motion
                 motionImg = img.copy()
                 self.isMoving = self.motiondetect.detectmotion(motionImg)
+            else:
+                self.isMoving = False
 
             if self.recordOnPresence:
                 # detect objects and indicate on display
@@ -293,7 +303,7 @@ def main():
 
     app = QtWidgets.QApplication(sys.argv)
     w = MyWindowClass(None)
-    w.setWindowTitle('DeepEye 2018')
+    w.setWindowTitle('Deepeye 2018')
     w.show()
     app.exec_()
 
