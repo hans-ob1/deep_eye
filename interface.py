@@ -82,29 +82,15 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
 
-        # resize param ratio (w,h)
-        MainFrame_Width = self.frameSize().width()
-        MainFrame_Height = self.frameSize().height()
-        self.tabWidget_relativeSizeRatio = [self.tabWidget.geometry().width()/MainFrame_Width,
-                                            self.tabWidget.geometry().height()/MainFrame_Height]
-        self.liveWidget_relativeSizeRatio = [self.live_display.geometry().width()/MainFrame_Width,
-                                            self.live_display.geometry().height()/MainFrame_Height]
-        self.triggerGroup_relativeSizeRatio = [self.triggerGroup.geometry().width()/MainFrame_Width,
-                                            self.triggerGroup.geometry().height()/MainFrame_Height]
-        self.recordButton_relativeSizeRatio = [self.recordButton.geometry().width()/MainFrame_Width,
-                                            self.recordButton.geometry().height()/MainFrame_Height]
-
-        # relative positions
-        self.triggerGroup_relativePosRatio = [self.triggerGroup.geometry().x()/MainFrame_Width,
-                                            self.triggerGroup.geometry().y()/MainFrame_Height]
-        self.filepathText_relativePosRatio = [self.filepathText.geometry().x()/MainFrame_Width,
-                                            self.filepathText.geometry().y()/MainFrame_Height]
-        self.recordButton_relativePosRatio = [self.recordButton.geometry().x()/MainFrame_Width,
-                                            self.recordButton.geometry().y()/MainFrame_Height]
+        # obtain dim of elements
+        self.triggerGroupDim = [self.triggerGroup.geometry().width(),self.triggerGroup.geometry().height()]
+        self.recordButtonDim = [self.recordButton.geometry().width(),self.recordButton.geometry().height()]
+        self.filepathTextDim = [self.filepathText.geometry().width(),self.filepathText.geometry().height()]
 
         # Livefeed tab:
         self.window_width = self.live_display.frameSize().width()
         self.window_height = self.live_display.frameSize().height()
+        self.live_display.setStyleSheet("QLabel { background-color : black}")
         # self.live_widget.setAutoFillBackground(True)
         # self.live_display = OwnImageWidget(self.live_widget)       
 
@@ -148,47 +134,35 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         curr_mainframe_w = self.frameSize().width()
         curr_mainframe_h = self.frameSize().height()
 
-        # new TabWidget Size
-        x = self.tabWidget.geometry().x()
-        y = self.tabWidget.geometry().y()
+        # Adjust tab widget size
+        fixed_tab_x = self.tabWidget.geometry().x()
+        fixed_tab_y = self.tabWidget.geometry().y()
+        new_tab_w = curr_mainframe_w - 40
+        new_tab_h = curr_mainframe_h - 80
 
-        new_width = int(self.tabWidget_relativeSizeRatio[0] * curr_mainframe_w)
-        new_height = int(self.tabWidget_relativeSizeRatio[1] * curr_mainframe_h)
+        self.tabWidget.resize(new_tab_w,new_tab_h)
 
-        self.tabWidget.setGeometry(x,y,new_width,new_height)
+        # **** Set all elements relative to tabWidget_relativeSizeRatio ****
 
-        # new live display Size
-        new_width = int(self.liveWidget_relativeSizeRatio[0] * curr_mainframe_w)
-        new_height = int(self.liveWidget_relativeSizeRatio[1] * curr_mainframe_h)
+        # set triggerGroup Pos:
+        new_trigger_x = fixed_tab_x + (new_tab_w - self.triggerGroupDim[0] - 40)
+        new_trigger_y = fixed_tab_y
+        self.triggerGroup.move(new_trigger_x,new_trigger_y)
 
-        self.window_width = new_width
-        self.window_height = new_height
+        # set recordButton Pos:
+        new_recordbtn_x = fixed_tab_x + (new_tab_w/2 - self.recordButtonDim[0])
+        new_recordbtn_y = fixed_tab_y + (new_tab_h - self.recordButtonDim[1] - 80)
+        self.recordButton.move(new_recordbtn_x,new_recordbtn_y)
 
+        # set filePath Pos:
+        new_filepath_x = fixed_tab_x
+        new_filepath_y = new_recordbtn_y - self.filepathTextDim[1] - 20
+        self.filepathText.move(new_filepath_x,new_filepath_y)
+
+        # finally set the display size
+        self.window_width = new_trigger_x - 40
+        self.window_height = new_filepath_y - 40
         self.live_display.resize(self.window_width,self.window_height)
-
-        # new triggergroup Size
-        new_x = int(self.triggerGroup_relativePosRatio[0]*curr_mainframe_w)
-        new_y = int(self.triggerGroup_relativePosRatio[1]*curr_mainframe_h)
-        new_width = int(self.triggerGroup_relativeSizeRatio[0] * curr_mainframe_w)
-        new_height = int(self.triggerGroup_relativeSizeRatio[1] * curr_mainframe_h)
-
-        self.triggerGroup.setGeometry(new_x,new_y,new_width,new_height)
-
-        # new record button
-        new_x = int(self.recordButton_relativePosRatio[0]*curr_mainframe_w)
-        new_y = int(self.recordButton_relativePosRatio[1]*curr_mainframe_h)
-        new_width = int(self.recordButton_relativeSizeRatio[0] * curr_mainframe_w)
-        new_height = int(self.recordButton_relativeSizeRatio[1] * curr_mainframe_h)
-
-        self.recordButton.setGeometry(new_x,new_y,new_width,new_height)
-
-        # new filepath display
-        new_x = int(self.filepathText_relativePosRatio[0]*curr_mainframe_w)
-        new_y = int(self.filepathText_relativePosRatio[1]*curr_mainframe_h)
-        width = self.filepathText.geometry().width()
-        height = self.filepathText.geometry().height()
-
-        self.filepathText.setGeometry(new_x,new_y,width,height)
 
     def record_to(self):
 
@@ -342,7 +316,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
             # UI thingy
             self.recordButton.setEnabled(True)
-            self.displayText.setText('')
 
             # grab frame from video thread
             frame = q.get()

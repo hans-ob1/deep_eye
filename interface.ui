@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>863</width>
+    <width>862</width>
     <height>620</height>
    </rect>
   </property>
@@ -168,19 +168,6 @@
        <string/>
       </property>
      </widget>
-     <widget class="QLabel" name="displayText">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>180</y>
-        <width>241</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>No USB Camera Found</string>
-      </property>
-     </widget>
     </widget>
     <widget class="QWidget" name="setting_tab">
      <attribute name="title">
@@ -194,7 +181,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>863</width>
+     <width>862</width>
      <height>25</height>
     </rect>
    </property>
