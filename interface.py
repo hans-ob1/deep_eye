@@ -57,6 +57,10 @@ class OwnImageWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(OwnImageWidget, self).__init__(parent)
         self.image = None
+        self.setAutoFillBackground(True)
+
+    def setSize(self, width, height):
+        self.resize(width, height)
 
     def setImage(self, image):
         self.image = image
@@ -83,8 +87,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         MainFrame_Height = self.frameSize().height()
         self.tabWidget_relativeSizeRatio = [self.tabWidget.geometry().width()/MainFrame_Width,
                                             self.tabWidget.geometry().height()/MainFrame_Height]
-        self.liveWidget_relativeSizeRatio = [self.live_widget.geometry().width()/MainFrame_Width,
-                                            self.live_widget.geometry().height()/MainFrame_Height]
+        self.liveWidget_relativeSizeRatio = [self.live_display.geometry().width()/MainFrame_Width,
+                                            self.live_display.geometry().height()/MainFrame_Height]
         self.triggerGroup_relativeSizeRatio = [self.triggerGroup.geometry().width()/MainFrame_Width,
                                             self.triggerGroup.geometry().height()/MainFrame_Height]
         self.recordButton_relativeSizeRatio = [self.recordButton.geometry().width()/MainFrame_Width,
@@ -99,9 +103,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                                             self.recordButton.geometry().y()/MainFrame_Height]
 
         # Livefeed tab:
-        self.window_width = self.live_widget.frameSize().width()
-        self.window_height = self.live_widget.frameSize().height()
-        self.live_widget = OwnImageWidget(self.live_widget)       
+        self.window_width = self.live_display.frameSize().width()
+        self.window_height = self.live_display.frameSize().height()
+        # self.live_widget.setAutoFillBackground(True)
+        # self.live_display = OwnImageWidget(self.live_widget)       
 
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.update_frame)
@@ -153,16 +158,14 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.tabWidget.setGeometry(x,y,new_width,new_height)
 
         # new live display Size
-        x = self.live_widget.geometry().x()
-        y = self.live_widget.geometry().y()
-
         new_width = int(self.liveWidget_relativeSizeRatio[0] * curr_mainframe_w)
         new_height = int(self.liveWidget_relativeSizeRatio[1] * curr_mainframe_h)
 
         self.window_width = new_width
         self.window_height = new_height
 
-        self.live_widget.setGeometry(x,y,new_width,new_height)
+        self.live_display.resize(self.window_width,self.window_height)
+
         # new triggergroup Size
         new_x = int(self.triggerGroup_relativePosRatio[0]*curr_mainframe_w)
         new_y = int(self.triggerGroup_relativePosRatio[1]*curr_mainframe_h)
@@ -328,7 +331,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         height, width, bpc = img.shape
         bpl = bpc * width
         image = QtGui.QImage(img.data, width, height, bpl, QtGui.QImage.Format_RGB888)
-        self.live_widget.setImage(image)
+        pix = QtGui.QPixmap(image)
+        self.live_display.setPixmap(pix)
+
+        # self.live_widget.setImage(image)
 
     # Live Mode
     def update_frame(self):

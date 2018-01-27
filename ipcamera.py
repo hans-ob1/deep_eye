@@ -20,4 +20,4 @@ while cap.isOpened():
 	cv2.imshow('test',img)
 
 	if ord('q') == cv2.waitKey(10):
-		exit(0)
+		exit(0)q

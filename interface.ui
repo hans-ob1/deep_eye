@@ -66,35 +66,6 @@
      <attribute name="title">
       <string>Live Feed</string>
      </attribute>
-     <widget class="QWidget" name="live_widget" native="true">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>20</y>
-        <width>640</width>
-        <height>360</height>
-       </rect>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>640</width>
-        <height>360</height>
-       </size>
-      </property>
-      <widget class="QLabel" name="displayText">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>160</y>
-         <width>221</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>No USB Camera Input Detected</string>
-       </property>
-      </widget>
-     </widget>
      <widget class="QPushButton" name="recordButton">
       <property name="enabled">
        <bool>false</bool>
@@ -184,11 +155,32 @@
        </property>
       </widget>
      </widget>
-     <zorder>live_widget</zorder>
-     <zorder>recordButton</zorder>
-     <zorder>filepathText</zorder>
-     <zorder>triggerGroup</zorder>
-     <zorder>horizontalSpacer</zorder>
+     <widget class="QLabel" name="live_display">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>640</width>
+        <height>360</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="displayText">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>180</y>
+        <width>241</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>No USB Camera Found</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="setting_tab">
      <attribute name="title">
