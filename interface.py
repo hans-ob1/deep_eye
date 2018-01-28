@@ -9,6 +9,7 @@ import queue
 from recordsave import Recorder
 from ssd_engine import SSD_Detector
 from motiondetector import MotionDetector
+from settings import EmailSender
 
 # Cam Params
 CAM_WIDTH = 1280
@@ -51,31 +52,7 @@ def grab(cam, queue, width, height, fps):
             print (queue.qsize())
 
     print("Terminated camera feed")
-
-
-class OwnImageWidget(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        super(OwnImageWidget, self).__init__(parent)
-        self.image = None
-        self.setAutoFillBackground(True)
-
-    def setSize(self, width, height):
-        self.resize(width, height)
-
-    def setImage(self, image):
-        self.image = image
-        sz = image.size()
-        self.setMinimumSize(sz)
-        self.update()
-
-    def paintEvent(self, event):
-        qp = QtGui.QPainter()
-        qp.begin(self)
-        if self.image:
-            qp.drawImage(QtCore.QPoint(0, 0), self.image)
-        qp.end()
-
-
+    
 
 class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def __init__(self, parent=None):
@@ -90,9 +67,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # Livefeed tab:
         self.window_width = self.live_display.frameSize().width()
         self.window_height = self.live_display.frameSize().height()
-        self.live_display.setStyleSheet("QLabel { background-color : black}")
-        # self.live_widget.setAutoFillBackground(True)
-        # self.live_display = OwnImageWidget(self.live_widget)       
+        self.live_display.setStyleSheet("QLabel { background-color : black}")  
 
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.update_frame)
@@ -126,6 +101,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         # Motion detector object
         self.motiondetect = MotionDetector()
+
+        # email alert module
+        self.emailsender = EmailSender()
 
     def resizeEvent(self,event):
         # readjust ui according to window size
@@ -307,8 +285,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         image = QtGui.QImage(img.data, width, height, bpl, QtGui.QImage.Format_RGB888)
         pix = QtGui.QPixmap(image)
         self.live_display.setPixmap(pix)
-
-        # self.live_widget.setImage(image)
 
     # Live Mode
     def update_frame(self):
