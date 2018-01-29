@@ -5,6 +5,7 @@ import numpy as np
 import threading
 import time
 import queue
+import re
 
 from recordsave import Recorder
 from ssd_engine import SSD_Detector
@@ -107,10 +108,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.emailsetupButton.clicked.connect(self.emailAlertSetup)
         self.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
         self.port_input.setValidator(QtGui.QIntValidator(0,999))
-        regexp = QtCore.QRegExp('^.+@([?)[a-zA-Z0-9-.]+.([a-zA-Z]{2,3}|[0-9]{1,3})(]?)$')
-        self.email_input.setValidator(QtGui.QRegExpValidator(regexp))
-
-        #^.+@([?)[a-zA-Z0-9-.]+.([a-zA-Z]{2,3}|[0-9]{1,3})(]?)$
 
 
     def emailAlertSetup(self):
@@ -120,9 +117,26 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             smtp = self.smtp_input.text()
             port = self.port_input.text()
 
-            print(email_address)
+            # simple check to evaluate input validity
+            check_email_pattern = re.compile('[^@]+@[^@]+\.[^@]+')
+            if not check_email_pattern.match(email_address):
+                self.err_email_label.setText("Invalid Email")
+            else:
+                self.emailsender.login_setup(email_address,email_password,smtp,int(port))
+
+                if self.emailsender.getSetupFlag():
+
+                    # Toggle interface to be setup
+                    self.email_input.setEnabled(False)
+                    self.password_input.setEnabled(False)
+                    self.smtp_input.setEnabled(False)
+                    self.port_input.setEnabled(True)
+                    self.emailsetupButton.setText("Change")
+
+                
+
+
             print(email_password)
-            print(smtp)
             print(port)
 
 

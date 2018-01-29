@@ -214,7 +214,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>70</y>
+         <y>80</y>
          <width>91</width>
          <height>31</height>
         </rect>
@@ -227,7 +227,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>110</y>
+         <y>130</y>
          <width>91</width>
          <height>31</height>
         </rect>
@@ -236,43 +236,17 @@
         <string>SMTP:</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="testButton">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>190</y>
-         <width>121</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Send Test Email</string>
-       </property>
-      </widget>
       <widget class="QLabel" name="port_label">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>150</y>
+         <y>180</y>
          <width>91</width>
          <height>31</height>
         </rect>
        </property>
        <property name="text">
         <string>Port:</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="emailsetupButton">
-       <property name="geometry">
-        <rect>
-         <x>150</x>
-         <y>190</y>
-         <width>99</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Setup</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="email_input">
@@ -289,7 +263,7 @@
        <property name="geometry">
         <rect>
          <x>100</x>
-         <y>70</y>
+         <y>80</y>
          <width>151</width>
          <height>31</height>
         </rect>
@@ -299,7 +273,7 @@
        <property name="geometry">
         <rect>
          <x>100</x>
-         <y>110</y>
+         <y>130</y>
          <width>151</width>
          <height>31</height>
         </rect>
@@ -309,12 +283,51 @@
        <property name="geometry">
         <rect>
          <x>100</x>
-         <y>150</y>
+         <y>180</y>
          <width>151</width>
          <height>31</height>
         </rect>
        </property>
       </widget>
+     </widget>
+     <widget class="QLabel" name="err_email_label">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>60</y>
+        <width>121</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="testButton">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>260</y>
+        <width>121</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Send Test Email</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="emailsetupButton">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>260</y>
+        <width>99</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Setup</string>
+      </property>
      </widget>
     </widget>
    </widget>
