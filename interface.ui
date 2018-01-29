@@ -174,6 +174,9 @@
       <string>Setting</string>
      </attribute>
      <widget class="QGroupBox" name="emailGroup">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -194,16 +197,6 @@
       <property name="title">
        <string>SMTP Setup (for email alerts)</string>
       </property>
-      <widget class="QTextEdit" name="email_txtbox">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>30</y>
-         <width>151</width>
-         <height>31</height>
-        </rect>
-       </property>
-      </widget>
       <widget class="QLabel" name="email_label">
        <property name="geometry">
         <rect>
@@ -230,16 +223,6 @@
         <string>Password:</string>
        </property>
       </widget>
-      <widget class="QTextEdit" name="password_txtbox">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>70</y>
-         <width>151</width>
-         <height>31</height>
-        </rect>
-       </property>
-      </widget>
       <widget class="QLabel" name="smtp_label">
        <property name="geometry">
         <rect>
@@ -251,16 +234,6 @@
        </property>
        <property name="text">
         <string>SMTP:</string>
-       </property>
-      </widget>
-      <widget class="QTextEdit" name="smtp_txtbox">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>110</y>
-         <width>151</width>
-         <height>31</height>
-        </rect>
        </property>
       </widget>
       <widget class="QPushButton" name="testButton">
@@ -289,17 +262,7 @@
         <string>Port:</string>
        </property>
       </widget>
-      <widget class="QTextEdit" name="port_txtbox">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>150</y>
-         <width>151</width>
-         <height>31</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="emailsetupButton">
        <property name="geometry">
         <rect>
          <x>150</x>
@@ -310,6 +273,46 @@
        </property>
        <property name="text">
         <string>Setup</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="email_input">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>30</y>
+         <width>151</width>
+         <height>31</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="password_input">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>70</y>
+         <width>151</width>
+         <height>31</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="smtp_input">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>110</y>
+         <width>151</width>
+         <height>31</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="port_input">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>150</y>
+         <width>151</width>
+         <height>31</height>
+        </rect>
        </property>
       </widget>
      </widget>

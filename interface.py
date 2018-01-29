@@ -104,6 +104,29 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         # email alert module
         self.emailsender = EmailSender()
+        self.emailsetupButton.clicked.connect(self.emailAlertSetup)
+        self.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.port_input.setValidator(QtGui.QIntValidator(0,999))
+        regexp = QtCore.QRegExp('^.+@([?)[a-zA-Z0-9-.]+.([a-zA-Z]{2,3}|[0-9]{1,3})(]?)$')
+        self.email_input.setValidator(QtGui.QRegExpValidator(regexp))
+
+        #^.+@([?)[a-zA-Z0-9-.]+.([a-zA-Z]{2,3}|[0-9]{1,3})(]?)$
+
+
+    def emailAlertSetup(self):
+        if not self.emailsender.getSetupFlag():
+            email_address = self.email_input.text()
+            email_password = self.password_input.text()
+            smtp = self.smtp_input.text()
+            port = self.port_input.text()
+
+            print(email_address)
+            print(email_password)
+            print(smtp)
+            print(port)
+
+
+
 
     def resizeEvent(self,event):
         # readjust ui according to window size
