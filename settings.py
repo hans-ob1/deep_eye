@@ -20,33 +20,37 @@ class EmailSender:
 
 		self.isSetup = False
 		self.fname_auth = os.path.join(AUTH_PATH,AUTH_FILE)
+		self.sendingServer = smtplib.SMTP(timeout=3)	# set a timeout for connection
 		path_to_fname_auth = Path(self.fname_auth)
 
 		if path_to_fname_auth.exists():
 
-			with open(self.fname_auth) as cred_file:
-
-				try:	# try to open json file and parse details
+			try:	# try to open json file and parse details
+				with open(self.fname_auth) as cred_file:
 					collective_params = json.load(cred_file)
-
 					self.email_address = collective_params['email_address']
 					self.email_password = collective_params['email_password']
 					self.smtp_server = collective_params['smtp_server']
 					self.port_number = int(collective_params['port_number'])
-				except:
-					print("Email error 0: Failed to get login details, perhaps invalid or corrupted auth/email_crediential.json file?")
-					self.isSetup = False
+					cred_file.close()
+			except:
+				print("Email error 0: Failed to get login details, perhaps invalid or corrupted auth/email_crediential.json file?")
+			else:
 
 				try:	# if successfully loaded login details, try to login server
-					self.sendingServer = smtplib.SMTP(host=self.smtp_server, port=self.port_number)
-					self.sendingServer.starttls()
-					self.sendingServer.login(self.email_address, self.email_password)
-					self.isSetup = True
+					self.sendingServer.connect(self.smtp_server, self.port_number)
 				except:
-					print("Email error 1: Failed to setup SMTP server properly, perhaps invalid login details?")
-					self.isSetup = False
+					print("SMTP connection time out: check smtp/port before try again")
+				else:
+					try:
+						self.sendingServer.starttls()
+						self.sendingServer.login(self.email_address, self.email_password)
+					except:
+						print("Email error 1: Failed to login")
+					else:
+						self.isSetup = True
 
-				cred_file.close()
+				
 
 
 	def getSetupFlag(self):
@@ -57,35 +61,47 @@ class EmailSender:
 		
 	def login_setup(self, user, password, smtp, port):
 
+		server_connected = False
+		successfully_login = False
+
 		try:
-			self.sendingServer = smtplib.SMTP(host=smtp, port=port)
+			self.sendingServer.connect(smtp, port)
 			self.sendingServer.starttls()
-			self.sendingServer.login(user,password)
 		except:
-			print("Email error 2: Failed to setup SMTP server, check your login details")
-			self.isSetup = False
+			print("Email error 2: Failed to setup SMTP server, check smtp/port number")
+		else:
+			server_connected = True
 
-		try:
-			self.email_address = user
-			self.email_password = password
-			self.smtp_server = smtp
-			self.port_number = port			
+		if server_connected:
+			try:
+				self.sendingServer.login(user,password)
+			except:
+				print("Email error 3: Login failed, check your login details")
+			else:
+				successfully_login = True
 
-			# write creditential files to json
-			cred_data = {'email_address': self.email_address,
-						 'email_password': self.email_password,
-						 'smtp_server': self.smtp_server,
-						 'port_number': str(self.port_number)
-						}
+			if successfully_login:
+				try:
+					self.email_address = user
+					self.email_password = password
+					self.smtp_server = smtp
+					self.port_number = port			
 
-			with open(self.fname_auth, 'w+') as myCred:
-				json.dump(cred_data, myCred)
-				myCred.close()
+					# write creditential files to json
+					cred_data = {'email_address': self.email_address,
+								 'email_password': self.email_password,
+								 'smtp_server': self.smtp_server,
+								 'port_number': str(self.port_number)
+								}
 
-			self.isSetup = True
-		except:
-			print("Email error 3: Failed to store credientials, check if the folder (auth/) is present!")
-			self.isSetup = False
+					with open(self.fname_auth, 'w+') as myCred:
+						json.dump(cred_data, myCred)
+						myCred.close()
+				except:
+					print("Email error 3: Failed to store credientials, check if the folder (auth/) is present!")
+					self.isSetup = False
+				else:
+					self.isSetup = True
 
 	def send_testmsg(self):
 
