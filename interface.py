@@ -106,40 +106,57 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # email alert module
         self.emailsender = EmailSender()
         self.emailsetupButton.clicked.connect(self.emailAlertSetup)
+        self.testemailButton.clicked.connect(self.emailSendTest)
         self.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
         self.port_input.setValidator(QtGui.QIntValidator(0,999))
 
+        if self.emailsender.getSetupFlag():
+            email_address, email_password, smtp, port = self.emailsender.getLoginDetails()
+            self.email_input.setText(email_address)
+            self.password_input.setText(email_password)
+            self.smtp_input.setText(smtp)
+            self.port_input.setText(str(port))
+
+            # Disable user interface
+            self.emailGroup.setEnabled(False)
+            self.testemailButton.setEnabled(True)
+            self.emailsetupButton.setText("Change")
+
+    def emailSendTest(self):
+        if self.emailsender.getSetupFlag():
+            self.emailsender.send_testmsg()
 
     def emailAlertSetup(self):
-        if not self.emailsender.getSetupFlag():
-            email_address = self.email_input.text()
-            email_password = self.password_input.text()
-            smtp = self.smtp_input.text()
-            port = self.port_input.text()
+        if self.emailsetupButton.text() == "Setup":
+            if not self.emailsender.getSetupFlag():
+                email_address = self.email_input.text()
+                email_password = self.password_input.text()
+                smtp = self.smtp_input.text()
+                port = self.port_input.text()
 
-            # simple check to evaluate input validity
-            check_email_pattern = re.compile('[^@]+@[^@]+\.[^@]+')
-            if not check_email_pattern.match(email_address):
-                self.err_email_label.setText("Invalid Email")
-            else:
-                self.emailsender.login_setup(email_address,email_password,smtp,int(port))
+                # simple check to evaluate input validity
+                check_email_pattern = re.compile('[^@]+@[^@]+\.[^@]+')
+                if not check_email_pattern.match(email_address):
+                    self.err_email_label.setText("Invalid Email")
+                else:
+                    self.err_email_label.setText("")
+                    self.emailsender.login_setup(email_address,email_password,smtp,int(port))
 
-                if self.emailsender.getSetupFlag():
+                    if self.emailsender.getSetupFlag():
 
-                    # Toggle interface to be setup
-                    self.email_input.setEnabled(False)
-                    self.password_input.setEnabled(False)
-                    self.smtp_input.setEnabled(False)
-                    self.port_input.setEnabled(True)
-                    self.emailsetupButton.setText("Change")
-
-                
-
-
-            print(email_password)
-            print(port)
-
-
+                        # If successfully logged in
+                        self.emailGroup.setEnabled(False)
+                        self.testemailButton.setEnabled(True)
+                        self.emailsetupButton.setText("Change")
+                    else:
+                        # authentication failed
+                        self.err_email_label.setText("Authentication Failed!")
+        else:
+            self.emailsender.close_connection()
+            self.emailGroup.setEnabled(True)
+            self.testemailButton.setEnabled(False)
+            self.emailsetupButton.setText("Setup")
+            
 
 
     def resizeEvent(self,event):

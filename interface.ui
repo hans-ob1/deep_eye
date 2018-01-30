@@ -293,8 +293,8 @@
      <widget class="QLabel" name="err_email_label">
       <property name="geometry">
        <rect>
-        <x>290</x>
-        <y>60</y>
+        <x>80</x>
+        <y>300</y>
         <width>121</width>
         <height>17</height>
        </rect>
@@ -303,7 +303,10 @@
        <string/>
       </property>
      </widget>
-     <widget class="QPushButton" name="testButton">
+     <widget class="QPushButton" name="testemailButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>30</x>
