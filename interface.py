@@ -18,7 +18,7 @@ CAM_HEIGHT = 720
 CAM_FPS = 30
 
 # (record everything mode) This parameter determines the intervals of recording
-RECORD_INTERVAL = 300 # in seconds
+RECORD_INTERVAL = 120 # in seconds
 
 # (smart recording mode) This parameter determines how many more frames to save after inactivity
 RECORD_EXTENSION = 60 # in frame counts
@@ -59,6 +59,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
+        self.setFixedSize(self.size())
 
         # obtain dim of elements
         self.triggerGroupDim = [self.triggerGroup.geometry().width(),self.triggerGroup.geometry().height()]
@@ -105,8 +106,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         # email alert module
         self.emailsender = EmailSender()
+        self.sendOnActivity = False
+        self.sendoutStartTime = -1
+
         self.emailsetupButton.clicked.connect(self.emailAlertSetup)
         self.testemailButton.clicked.connect(self.emailSendTest)
+        self.sendemailCheck.stateChanged.connect(self.emailSendToggleFunc)
         self.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
         self.port_input.setValidator(QtGui.QIntValidator(0,999))
 
@@ -120,7 +125,15 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             # Disable user interface
             self.emailGroup.setEnabled(False)
             self.testemailButton.setEnabled(True)
+            self.sendemailCheck.setEnabled(True)
             self.emailsetupButton.setText("Change")
+
+    def emailSendToggleFunc(self):
+        if self.sendemailCheck.isChecked():
+            self.sendOnActivity = True
+        else:
+            self.sendOnActivity = False
+            self.sendoutStartTime = -1
 
     def emailSendTest(self):
         if self.emailsender.getSetupFlag():
@@ -147,6 +160,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                         # If successfully logged in
                         self.emailGroup.setEnabled(False)
                         self.testemailButton.setEnabled(True)
+                        self.sendemailCheck.setEnabled(True)
                         self.emailsetupButton.setText("Change")
                     else:
                         # authentication failed
@@ -155,8 +169,32 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.emailsender.close_connection()
             self.emailGroup.setEnabled(True)
             self.testemailButton.setEnabled(False)
+            self.sendemailCheck.setEnabled(False)
             self.emailsetupButton.setText("Setup")
             
+    def emailSendTracker(self, isDetected):
+        currentDateTime = QtCore.QTime.currentTime().toString(QtCore.Qt.DefaultLocaleLongDate).split()
+        currentDayLight = currentDateTime[1]
+        currentTime = currentDateTime[0].split(':')
+        currentTimeSeconds = int(currentTime[0])*3600 + int(currentTime[1])*60 + int(currentTime[2])
+
+        if isDetected:
+            if self.sendoutStartTime == -1: # initialize
+                # send out first email here
+                print("Activity started: Send out first email")
+                self.emailsender.send_emailalert(True,currentTimeSeconds,currentDayLight)
+
+            self.sendoutStartTime = currentTimeSeconds
+        else:
+            # invoke timeout sequence (2 mins of inactivity, send out last email)
+            if self.sendoutStartTime > -1:
+
+                if currentTimeSeconds - self.sendoutStartTime > RECORD_INTERVAL:
+
+                    print("Activity ended: Send out last email")
+                    self.emailsender.send_emailalert(False,currentTimeSeconds,currentDayLight)
+
+                    self.sendoutStartTime = -1
 
 
     def resizeEvent(self,event):
@@ -284,7 +322,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 if assessOne and assessTwo:
                     self.record.killRecorder()
         else:
-            # Record everything in interval of 5 minutes
+            # Record everything in interval of 2 minutes
             if self.timetracker == -1:
                 self.timetracker = self.record.getCurrentTime()
             else:
@@ -351,6 +389,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             frame = q.get()
             img = frame["img"]
 
+            # detect motion
             if self.recordOnMotion:
                 # detect motion
                 motionImg = img.copy()
@@ -358,9 +397,18 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             else:
                 self.isMoving = False
 
+            # detect presence
             if self.recordOnPresence:
                 # detect objects and indicate on display
                 img, self.isDetected = self.detector.process_image(img)
+            else:
+                self.isDetected = False
+
+            if self.sendOnActivity:
+                if self.isMoving or self.isDetected:
+                    self.emailSendTracker(True)
+                else:
+                    self.emailSendTracker(False)
 
 
             # Tag the frame with indications
@@ -384,7 +432,7 @@ def main():
 
     app = QtWidgets.QApplication(sys.argv)
     w = MyWindowClass(None)
-    w.setWindowTitle('Deepeye 2018')
+    w.setWindowTitle('DeepCam 2018')
     w.show()
     app.exec_()
 

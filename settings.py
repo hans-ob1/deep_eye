@@ -135,6 +135,57 @@ class EmailSender:
 
 		return sendSuccess		
 
+	def send_emailalert(self, isFirst, timeStamp, ampm):
+
+		msg = MIMEMultipart()       # create a message
+		msg['From'] = 'automessenger'
+		msg['To'] = self.email_address
+
+		# convert timeStamp to hours and minutes:
+		hours = int((timeStamp/3600))
+		minutes = int((timeStamp%3600)/60)
+		seconds =  int((timeStamp%3600)%60)
+
+		sendSuccess = False
+		if self.isSetup:
+			if isFirst:
+				try:
+				    # add in the actual person name to the message template
+				    message = "Activity Started at " + str(hours) + ":" + str(minutes) + ":" + str(seconds) + " " + str(ampm)
+
+				    msg['Subject']= "Alert: Activity Started"
+				    
+				    # add in the message body
+				    msg.attach(MIMEText(message, 'plain'))
+				    
+				    # send the message via the server set up earlier.
+				    self.sendingServer.send_message(msg)
+				    
+				    del msg
+				except:
+					print("Email error 4: Failed to send out email msg, runtime error!")
+				else:
+					sendSuccess = True
+			else:
+				try:
+				    # add in the actual person name to the message template
+				    message = "Activity Ended at " + str(hours) + ":" + str(minutes) + ":" + str(seconds) + " " + str(ampm)
+
+				    msg['Subject']= "Alert: Activity Ended"
+				    
+				    # add in the message body
+				    msg.attach(MIMEText(message, 'plain'))
+				    
+				    # send the message via the server set up earlier.
+				    self.sendingServer.send_message(msg)
+				    
+				    del msg
+				except:
+					print("Email error 4: Failed to send out email msg, runtime error!")
+				else:
+					sendSuccess = True
+
+		return sendSuccess	
 
 	def close_connection(self):
 		if self.isSetup:

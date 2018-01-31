@@ -60,7 +60,7 @@
      </size>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="live_tab">
      <attribute name="title">
@@ -180,7 +180,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>20</y>
+        <y>50</y>
         <width>261</width>
         <height>231</height>
        </rect>
@@ -188,6 +188,7 @@
       <property name="font">
        <font>
         <weight>75</weight>
+        <italic>true</italic>
         <bold>true</bold>
        </font>
       </property>
@@ -195,7 +196,7 @@
        <string notr="true">border: 1px solid gray;</string>
       </property>
       <property name="title">
-       <string>SMTP Setup (for email alerts)</string>
+       <string>SMTP Login (for email)</string>
       </property>
       <widget class="QLabel" name="email_label">
        <property name="geometry">
@@ -293,11 +294,20 @@
      <widget class="QLabel" name="err_email_label">
       <property name="geometry">
        <rect>
-        <x>80</x>
-        <y>300</y>
-        <width>121</width>
-        <height>17</height>
+        <x>90</x>
+        <y>330</y>
+        <width>131</width>
+        <height>20</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <italic>true</italic>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 0, 0);</string>
       </property>
       <property name="text">
        <string/>
@@ -310,7 +320,7 @@
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>260</y>
+        <y>290</y>
         <width>121</width>
         <height>27</height>
        </rect>
@@ -323,7 +333,7 @@
       <property name="geometry">
        <rect>
         <x>160</x>
-        <y>260</y>
+        <y>290</y>
         <width>99</width>
         <height>27</height>
        </rect>
@@ -331,6 +341,68 @@
       <property name="text">
        <string>Setup</string>
       </property>
+     </widget>
+     <widget class="Line" name="settingdivider">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>10</y>
+        <width>16</width>
+        <height>461</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="alertsetuplabel">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Alert Setup</string>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="upondetectGrp">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>370</y>
+        <width>201</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Upon Detection:</string>
+      </property>
+      <widget class="QCheckBox" name="sendemailCheck">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>20</y>
+         <width>171</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Send me a email alert</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </widget>

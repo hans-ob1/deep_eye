@@ -64,9 +64,6 @@ class Recorder:
 
 		completeFolderDir = self.predefinedFilePath + '/' + self.date4processing + '/'
 
-		print(type(completeFolderDir))
-		print(type(self.time4processing))
-
 		os.makedirs(os.path.dirname(completeFolderDir), exist_ok=True)
 		completeFilePath = completeFolderDir + str(self.time4processing) + '.avi'
 
