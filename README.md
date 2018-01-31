@@ -13,5 +13,9 @@ DeepEye is a video surveillance application that runs on your idelling desktop c
 ### Useful Command
 For training of your own dataset:
 ~~~~
-python3 export_inference_graph.py --input_type image_tensor --pipeline_config_path training/ssd_mobilenet_v1_coco.config --trained_checkpoint_prefix training/model.ckpt-490468 --output_directory ssd_3class
+python3 export_inference_graph.py \
+        --input_type image_tensor \
+        --pipeline_config_path training/ssd_mobilenet_v1_coco.config \
+        --trained_checkpoint_prefix training/model.ckpt-490468 \
+        --output_directory ssd_3class
 ~~~~
