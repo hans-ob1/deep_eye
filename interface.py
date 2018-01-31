@@ -12,6 +12,9 @@ from ssd_engine import SSD_Detector
 from motiondetector import MotionDetector
 from settings import EmailSender
 
+# Title
+WINDOW_TITLE = "DeepCam v1.1 2018"
+
 # Cam Params
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
@@ -432,7 +435,7 @@ def main():
 
     app = QtWidgets.QApplication(sys.argv)
     w = MyWindowClass(None)
-    w.setWindowTitle('DeepCam 2018')
+    w.setWindowTitle(WINDOW_TITLE)
     w.show()
     app.exec_()
 
