@@ -16,6 +16,7 @@ from settings import EmailSender
 WINDOW_TITLE = "DeepEye v1.1 2018"
 
 # Cam Params
+CAM_INDEX = 0
 CAM_WIDTH = 1280
 CAM_HEIGHT = 720
 CAM_FPS = 30
@@ -389,39 +390,43 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.recordButton.setEnabled(True)
 
             # grab frame from video thread
-            frame = q.get()
-            img = frame["img"]
-
-            # detect motion
-            if self.recordOnMotion:
+            try:
+                frame = q.get()
+                img = frame["img"]
+            except:
+                print("error obtaining images")
+            else:
                 # detect motion
-                motionImg = img.copy()
-                self.isMoving = self.motiondetect.detectmotion(motionImg)
-            else:
-                self.isMoving = False
-
-            # detect presence
-            if self.recordOnPresence:
-                # detect objects and indicate on display
-                img, self.isDetected = self.detector.process_image(img)
-            else:
-                self.isDetected = False
-
-            if self.sendOnActivity:
-                if self.isMoving or self.isDetected:
-                    self.emailSendTracker(True)
+                if self.recordOnMotion:
+                    # detect motion
+                    motionImg = img.copy()
+                    self.isMoving = self.motiondetect.detectmotion(motionImg)
                 else:
-                    self.emailSendTracker(False)
+                    self.isMoving = False
+
+                # detect presence
+                if self.recordOnPresence:
+                    # detect objects and indicate on display
+                    img, self.isDetected = self.detector.process_image(img)
+                else:
+                    self.isDetected = False
+
+                if self.sendOnActivity:
+                    if self.isMoving or self.isDetected:
+                        self.emailSendTracker(True)
+                    else:
+                        self.emailSendTracker(False)
 
 
-            # Tag the frame with indications
-            self.drawOnFrame(img,self.isMoving)
+                # Tag the frame with indications
+                self.drawOnFrame(img,self.isMoving)
 
-            if self.record.getRecordingStatus():
-                self.recordTriggerFunc(img)
+                if self.record.getRecordingStatus():
+                    self.recordTriggerFunc(img)
 
-            # show frame with annotation
-            self.displayFrame(img)
+                # show frame with annotation
+                self.displayFrame(img)
+
 
     def closeEvent(self, event):
         global cam_running
@@ -430,7 +435,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
 
 def main():
-    capture_thread = threading.Thread(target=grab, args = (0, q, CAM_WIDTH, CAM_HEIGHT, CAM_FPS))
+    capture_thread = threading.Thread(target=grab, args = (CAM_INDEX, q, CAM_WIDTH, CAM_HEIGHT, CAM_FPS))
     capture_thread.start()
 
     app = QtWidgets.QApplication(sys.argv)
