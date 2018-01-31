@@ -13,7 +13,7 @@ from motiondetector import MotionDetector
 from settings import EmailSender
 
 # Title
-WINDOW_TITLE = "DeepCam v1.1 2018"
+WINDOW_TITLE = "DeepEye v1.1 2018"
 
 # Cam Params
 CAM_WIDTH = 1280
