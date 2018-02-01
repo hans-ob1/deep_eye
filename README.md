@@ -1,5 +1,5 @@
 #### Description
-DeepEye is a video surveillance application that runs on your idelling desktop computer. This project is inspired based on use cases of object detection using deep learning. There are two modes of detection; motion and object. The object detection backend uses SSD architecture and detects presence of human and pets. The code is open-source, feel free to modify for your own.
+DeepEye is a video surveillance application that runs on your idelling desktop computer. This project is inspired based on use cases of object detection using deep learning. There are two modes of detection; motion and object. The object detection backend uses SSD architecture and detects presence of human and pets. The code base is shared, feel free to modify for your own.
 
 #### Screenshots
 Screenshot 1                |  Screenshot 2              |    Screenshot 3 
@@ -22,9 +22,19 @@ Screenshot 4                |  Screenshot 5              |    Screenshot 6
 #### Video Demo:
 [![Video Demo](https://img.youtube.com/vi/93rKZjsv5dc/0.jpg)](https://www.youtube.com/watch?v=93rKZjsv5dc)
 
+#### Additional information
+The frozen model in models/ssd_mobilenet_v1_model is trained on modified coco dataset, consist of human, cat and dogs. You can perform your own training using google object detection api. Road-plan ahead is to move towards cloud and mobile app. Stay tuned.
 
 #### Useful Command
 For training of your own dataset:
+~~~~
+python3 train.py \
+         --logtostderr \
+         --train_dir=training/ \
+         --pipeline_config_path=training/ssd_mobilenet_v1_pets.config
+~~~~
+
+For exporting to frozen model
 ~~~~
 python3 export_inference_graph.py \
         --input_type image_tensor \
