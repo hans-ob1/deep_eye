@@ -1,5 +1,5 @@
 #### Description
-DeepEye is a video surveillance application that runs on your idelling desktop computer. This project is inspired based on use cases of object detection using deep learning. There are two modes of detection; motion and object. The object detection backend uses SSD architecture and detects presence of human and pets. The code base is shared, feel free to modify for your own.
+DeepEye is a video surveillance application that runs on your idelling desktop computer. This project is inspired based on use cases of object detection using deep learning. There are two modes of detection; motion and objects. The object detection backend uses SSD architecture and detects presence of human and pets. The code base is open-sourced, feel free to modify for your own.
 
 #### Screenshots
 Screenshot 1                |  Screenshot 2              |    Screenshot 3 
