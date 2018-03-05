@@ -4,11 +4,11 @@ DeepEye is a video surveillance application that runs on your idelling desktop c
 #### Screenshots
 Screenshot 1                |  Screenshot 2              |    Screenshot 3 
 :-------------------------:|:-------------------------:|:-------------------------:
-![](https://haixun00.github.io/img/project/deepcam/screenshot_1.png)  |  ![](https://haixun00.github.io/img/project/deepcam/screenshot_2.png) | ![](https://haixun00.github.io/img/project/deepcam/screenshot_3.png)
+![](https://khaixcore.github.io/img/project/deepcam/screenshot_1.png)  |  ![](https://khaixcore.github.io/img/project/deepcam/screenshot_2.png) | ![](https://khaixcore.github.io/img/project/deepcam/screenshot_3.png)
 
 Screenshot 4                |  Screenshot 5              |    Screenshot 6
 :-------------------------:|:-------------------------:|:-------------------------:
-![](https://haixun00.github.io/img/project/deepcam/screenshot_4.png)  |  ![](https://haixun00.github.io/img/project/deepcam/screenshot_5.png) | ![](https://haixun00.github.io/img/project/deepcam/screenshot_6.png)
+![](https://khaixcore.github.io/img/project/deepcam/screenshot_4.png)  |  ![](https://khaixcore.github.io/img/project/deepcam/screenshot_5.png) | ![](https://khaixcore.github.io/img/project/deepcam/screenshot_6.png)
 
 
 #### Dependencies
