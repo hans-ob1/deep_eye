@@ -19,11 +19,8 @@ Screenshot 4                |  Screenshot 5              |    Screenshot 6
 - pyQT5
 
 
-#### Video Demo:
-[![Video Demo](https://img.youtube.com/vi/93rKZjsv5dc/0.jpg)](https://www.youtube.com/watch?v=93rKZjsv5dc)
-
 #### Additional information
-The frozen model in models/ssd_mobilenet_v1_model is trained on modified coco dataset, consist of human, cat and dogs. You can perform your own training using google object detection api. Road-plan ahead is to move towards cloud and mobile app. Stay tuned.
+The frozen model in models/ssd_mobilenet_v1_model is trained on modified coco dataset, consist of human, cat and dogs. You can perform your own training using google object detection api. 
 
 #### Useful Command
 For training of your own dataset:
