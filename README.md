@@ -11,20 +11,28 @@ Screenshot 4                |  Screenshot 5              |    Screenshot 6
 ![](https://khaixcore.github.io/img/project/deepcam/screenshot_4.png)  |  ![](https://khaixcore.github.io/img/project/deepcam/screenshot_5.png) | ![](https://khaixcore.github.io/img/project/deepcam/screenshot_6.png)
 
 
-#### Dependencies
+#### Dependencies (Tested on)
 - Ubuntu 16.04.3
 - OpenCV 3.1
 - Tensorflow r1.3
 - Python 3.5
 - pyQT5
+- virtualenv (recommended)
 
 
 #### Additional information
-- Requires a CUDA ready GPU
-- The frozen model in models/ssd_mobilenet_v1_model is trained on modified coco dataset, consist of human, cat and dogs. You can perform your own training using [google object detection api](https://github.com/tensorflow/models/tree/master/research/object_detection). 
+- Requires a CUDA ready GPU, Cuda driver and cuDNN based requirement of Tensorflow
+- The frozen model in models/ssd_mobilenet_v1_model is trained on modified coco dataset, consist of human, cat and dogs.
+
+#### Usage Instruction
+After you get the dependencies, run the following cmd
+~~~
+python3 interface.py
+~~~
 
 #### Useful Command
-For training of your own dataset:
+You can perform your own training using [google object detection api](https://github.com/tensorflow/models/tree/master/research/object_detection). The following command is useful for training your own model and export to frozen model.
+
 ~~~~
 python3 train.py \
          --logtostderr \
