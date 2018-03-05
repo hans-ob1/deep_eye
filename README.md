@@ -20,7 +20,7 @@ Screenshot 4                |  Screenshot 5              |    Screenshot 6
 
 
 #### Additional information
-The frozen model in models/ssd_mobilenet_v1_model is trained on modified coco dataset, consist of human, cat and dogs. You can perform your own training using google object detection api. 
+The frozen model in models/ssd_mobilenet_v1_model is trained on modified coco dataset, consist of human, cat and dogs. You can perform your own training using [google object detection api](https://github.com/tensorflow/models/tree/master/research/object_detection). 
 
 #### Useful Command
 For training of your own dataset:
