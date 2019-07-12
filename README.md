@@ -1,14 +1,14 @@
 #### Description
-DeepEye is a video surveillance application that runs on your idelling desktop computer. This project is inspired based on use cases of object detection using deep learning. There are two modes of detection; motion and objects. The object detection backend uses SSD architecture and detects presence of human and pets. The code base is open-sourced, feel free to modify for your own.
+DeepEye is a video surveillance application that runs on your idling desktop computer. This project is inspired from the use cases of object detection using deep learning. There are two modes of detection; motion and objects. The object detection backend uses SSD architecture and detects presence of human and pets. The code base is open-sourced, feel free to modify for your own.
 
 #### Screenshots
 Screenshot 1                |  Screenshot 2              |    Screenshot 3 
 :-------------------------:|:-------------------------:|:-------------------------:
-![](https://khaixcore.github.io/img/project/deepeye/screenshot_1.png)  |  ![](https://khaixcore.github.io/img/project/deepeye/screenshot_2.png) | ![](https://khaixcore.github.io/img/project/deepeye/screenshot_3.png)
+![](https://raw.githubusercontent.com/khaixcore/deep_eye/master/screenshots/screenshot_1.png)  |  ![](https://raw.githubusercontent.com/khaixcore/deep_eye/master/screenshots/screenshot_2.png) | ![](https://raw.githubusercontent.com/khaixcore/deep_eye/master/screenshots/screenshot_3.png)
 
 Screenshot 4                |  Screenshot 5              |    Screenshot 6
 :-------------------------:|:-------------------------:|:-------------------------:
-![](https://khaixcore.github.io/img/project/deepeye/screenshot_4.png)  |  ![](https://khaixcore.github.io/img/project/deepeye/screenshot_5.png) | ![](https://khaixcore.github.io/img/project/deepeye/screenshot_6.png)
+![](https://raw.githubusercontent.com/khaixcore/deep_eye/master/screenshots/screenshot_4.png)  |  ![](https://raw.githubusercontent.com/khaixcore/deep_eye/master/screenshots/screenshot_5.png) | ![](https://raw.githubusercontent.com/khaixcore/deep_eye/master/screenshots/screenshot_6.png)
 
 
 #### Dependencies (Tested on)
